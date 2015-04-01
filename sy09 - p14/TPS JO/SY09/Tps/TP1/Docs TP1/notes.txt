@@ -1,0 +1,29 @@
+babies<-read.table("babies23.data",header=F)
+babies<-babies[c(7,5,8,10,12,13,21,11)]
+names(babies)<-c("bwt","gestation","parity","age","height","weight","smoke","education")
+babies$smoke<-factor(c("NonSmoking","Smoking","NonSmoking","NonSmoking")[babies$smoke+1])
+babies$education<-factor(babies$education,ordered=T)
+
+babies[babies$bwt == 999,1] <-NA
+babies[babies$gestation == 999, 2] <-NA
+babies[babies$age == 99, 4] <-NA
+babies[babies$height == 99, 5] <-NA
+babies[babies$weight == 999, 6] <-NA
+
+variables mère fumeuse / non fumeuse
+babies[babies$smoke=="NonSmoking",] moy = 119.5769
+babies[babies$smoke=="Smoking",]
+
+> summary(babies[babies$smoke=="Smoking",1])
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+   58.0   102.0   115.0   114.1   126.0   163.0    10.0 
+> summary(babies[babies$smoke=="NonSmoking",1])
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+     55     113     123     123     134     176      10 
+
+barplot(rbind(h1$counts,h2$counts),space=0,col=c("green","yellow"))
+
+
+ Génération d'un eps avec boxplot sur le temps de gestation :
+postscript(’boxplot-gestation.eps’,horizontal=F,width=12/2.5,height=12/2.5)
+boxplot(babies[babies$smoke=="NonSmoking",2], babies[babies$smoke=="Smoking",2],notch=T)

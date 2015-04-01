@@ -1,0 +1,179 @@
+bcdata <- read.csv('breast-cancer-wisconsin.data',head=TRUE)
+databcall <- subset(bcdata,select=c(-Samplecodenumber,-Class))
+
+classesbcall <- subset(bcdata,select=Class)
+
+databctrain <- databcall[1:400,]
+classesbctrain <- classesbcall[1:400,]
+
+databctest <- databcall[401:699,]
+classesbctest <- classesbcall[401:699,]
+
+
+
+ ------------------------------------SVM-----------------------
+
+model <- svm(databctrain, classesbctrain)
+pred <- predict(model, databctest)
+
+table(pred,t(classesbctest))
+
+
+--> Ceci donne les valeurs suivantes quant a la classification : 
+
+pred        benign malignant
+  benign       224         1
+  malignant      5        69
+
+
+
+a=tune(svm, train.x=databctrain, train.y=classesbctrain, validation.x=databctest, validation.y=classesbctest, 
+ranges = list(gamma = 10^(-1:1), cost = c(1,1.5,2)), control = tune.control(sampling = "fix"))
+
+
+##### valeur retournée par tune :
+
+Parameter tuning of `svm':
+
+- sampling method: 10-fold cross validation 
+
+- best parameters:
+ gamma cost
+   0.1    2
+
+- best performance: 0.04 
+
+
+-------------------------------------
+
+model <- svm(databctrain,classesbctrain,gamma=a$best.parameters$gamma,cost=a$best.parameters$cost)
+
+pred <- predict(model, databctest)
+table(pred,t(classesbctest))
+
+Les erreurs de classification sont exactement les memes avec les parametres a posteriori : 
+
+pred        benign malignant
+  benign       224         1
+  malignant      5        69
+
+
+-------------------------------------------------------------------------------------
+
+
+Les parametres par defauts et les parametre "optimaux" donnés par la fonction tune ne change pas 
+les resultats de la comparaison entre les predictions faites par SVM et les vraies classes : Comparaison entre predict(model,datatest) et classestest.
+
+Le but de ce tp est d'évaluer l'influence des hypers-parametres liés a la méthode des support vector machines. Nous verrons d'abord l'influence du
+parametre C de la méthode de Lagrange. Nous evalurons ensuite l'importance du type de noyaux ainsi que les parametres liés à un noyau fixé.
+Chaque parametre sera évalué en focntion de l'erreur moyenne comme critere de mesure de performance.
+
+Cette erreur moyenne correspond a la somme des erreurs empiriques de type alpha et beta (fausse alarme ou absence de diagnositque).
+Nous avons considéré pour le calcul de cette erreur
+
+
+
+1) Pour un noyau par défaut, voici l'evolution de l'erreur de classification moyenne en fonction du parametre Cost de SVM : 
+
+paramC <- function()
+{
+	result=rep(0,5);
+	ct = c(1,2,4,8,16);
+
+	for(i in 1:5)
+	{
+		model <- svm(databctrain,classesbctrain,gamma=a$best.parameters$gamma,cost=ct[i]);
+		pred <- predict(model, databctest);
+		t <- table(pred,t(classesbctest));
+	
+		result[i] = t[1,2] + t[2,1];
+	}
+	plot(ct, result, type="line");
+}
+
+Le graphique nous incite donc à choisir un parametre Cost = 2 ou 3. Ceci confirme de la valeur indiquée par la fonction de reglage
+des parametres à posterori tune qui prescrivait un parametre de 2.
+Avec un tel parametre, on retrouve bien l'indicateur de performance : 2 * 6 / 299 = 0.04. (cout 2 pour les erreurs).
+
+
+
+2) Evolution de l'erreur moyenne en fonction du type de noyau : 
+
+paramN <- function()
+{
+	result=rep(0,4);
+	noyau = c("linear", "polynomial", "radial", "sigmoid");
+
+	for(i in 1:4)
+	{
+		model <- svm(databctrain,classesbctrain,gamma=a$best.parameters$gamma,cost=a$best.parameters$cost, kernel=noyau[i]);
+		pred <- predict(model, databctest);
+		t <- table(pred,t(classesbctest));
+	
+		result[i] = t[1,2] + t[2,1];
+	}
+	return(result);
+}
+
+Les resultats sont les suivants :  4 5 5 7, avec cout (0,1). Le meilleur noyau pour notre jeu de données est donc le noyau de type linéaire, c'est à dire : 
+u'* v.
+
+
+
+3) 
+a] Influence du parametre gamma pour un noyau de type radius : exp(-gamma*|u-v|^2). Le terme Gamma est le parametre definissant la largeur de bande.
+
+
+paramG <- function()
+{
+	result=rep(0,8);
+	g = c(0.1,0.2,0.5,1,2,4,8,16);
+
+	for(i in 1:8)
+	{
+		model <- svm(databctrain,classesbctrain, gamma=a$best.parameters$gamma,cost=g[i]);
+		pred <- predict(model, databctest);
+		t <- table(pred,t(classesbctest));
+	
+		result[i] = t[1,2] + t[2,1];
+	}
+	plot(g, result, type="line");
+}
+
+le graphique nous indique de choisir une largeur de bande de gamma = 0.2 pour un noyau de type gaussien avec notre jeu de données.
+
+
+
+b] Influence du degré d'un noyau de type polynomial. Avec les parametres gamma et Cost trouvés par la fonction tune et coef0 = 0.
+Nous tracons par la fonction suivante les variations de l'erreur de classification en fonction du degre de noyau.
+
+
+paramD <- function()
+{
+	result=rep(0,8);
+	d = c(2,3,4,5,6,7,8,9);
+	for(i in 1:8)
+	{
+		model <- svm(databctrain,classesbctrain, kernel="polynomial", degre = d[i], gamma=a$best.parameters$gamma,cost=a$best.parameters$cost);
+		pred <- predict(model, databctest);
+		t <- table(pred,t(classesbctest));
+	
+		result[i] = t[1,2] + t[2,1];
+	}
+	plot(d, result, type="line");
+}
+
+Le graphique obtenu nous indique donc clairement que le meilleur degré du noyau polynomial dans le cadre de nos données est 3. Ceci coincide une
+nouvelle fois avec les valeurs qui sont données par default lors d'un appel standart de la fonction svm.
+
+
+
+Tout d'abord, nous avons pu appréhender la méthode SVM par le biais de fonction déja écrite du package e1071. La méthode de classification avec apprentissage
+SVM semble très efficiente. Cette derniere methode dépend d'un certain nombre de parametres faisiant varier les performances de cette methode.
+Une methode plutot pratique est l'utilisationd de la fonction tune qui calcule les meilleurs parametres avec en parametre le modele determiné par les données
+d'apprentissage, les données tests et les classes relles. Nous avons, à travers plusieurs tests, tester de retrouver les parametres optimaux pour nos jeux de données.
+Nous somme aller plus loin que tune en testant différents noyaux que celui par default (gaussien) et faisant varier les parametres de ces noyaux.
+
+Nous avons hélas pas eu le temps de tester la méthode SVM à de réelles données, faute de temps.
+
+

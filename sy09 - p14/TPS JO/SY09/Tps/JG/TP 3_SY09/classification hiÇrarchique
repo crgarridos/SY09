@@ -1,0 +1,69 @@
+=======================================================================================
+Exercice 1
+=======================================================================================
+Question 1
+_______________________________________________________________________________________
+
+mutation<-read.table("mutations2.txt",row.names=1)
+d = as.dist(mutation)
+
+par(mfrow=c(2,2)) 
+
+h = hclust(d, method="ward")
+plot(h,hang=-1)
+
+h1 = hclust(d, method="single")
+plot(h1,hang=-1)
+
+h2 = hclust(d, method="complete")
+plot(h2,hang=-1)
+
+h3 = hclust(d, method="average")
+plot(h3,hang=-1)
+
+
+_______________________________________________________________________________________
+Question 2
+_______________________________________________________________________________________
+par(mfrow=c(1,1)) 
+library(MASS)
+library(lattice)
+library(cluster)
+data(iris)
+donnees <- NULL
+donnees$num <- iris[,c(1:4)]
+donnees$cls <- iris[,5]
+
+d = dist(donnees$num)
+
+par(mfrow=c(2,2)) 
+
+h = hclust(d, method="ward")
+plot(h,hang=-1)
+
+h1 = hclust(d, method="single")
+plot(h1,hang=-1)
+
+h2 = hclust(d, method="complete")
+plot(h2,hang=-1)
+
+h3 = hclust(d, method="average")
+plot(h3,hang=-1)
+par(mfrow=c(1,1))
+
+//tableau de contingence
+cut <- cutree(h,3)
+t <- table(donnees$cls,cut)
+
+
+res <- princomp(donnees$num)
+xyplot(predict(res)[,1]~predict(res)[,2],group=donnees$cls)
+
+clusplot(donnees$num,cut)
+
+_______________________________________________________________________________________
+Question 3
+_______________________________________________________________________________________
+
+dia = diana(d)
+plot(dia)

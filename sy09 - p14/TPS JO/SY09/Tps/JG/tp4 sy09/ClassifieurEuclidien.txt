@@ -1,0 +1,76 @@
+Exercice 1 
+-----------
+
+question 1 : 
+
+library(MASS)
+library(lattice)
+
+Sigma1 <- diag(rep(1,2))
+mu1 <- matrix(c(0,0),nrow =2)
+D1App <- mvrnorm(n=300, mu1, Sigma1)
+
+LoiNormal <- function(a,b)
+{
+	Sigma2 <- diag(rep(a*a,2))
+    	mu2 <- matrix(c(b,0),nrow =2)
+	res <- mvrnorm(300, mu2, Sigma2)
+	res
+}
+
+classe <- matrix(1:600)
+classe[1:300]<- 1
+classe[301:600]<- 2
+
+D2App <- LoiNormal(1,10)
+D <- rbind(D1App,D2App)
+xyplot(D[,2]~D[,1],asp=1,group=classe,main = "Pour D2App : a = 1, b = 10", xlab = "x", ylab = "y")
+
+
+---------------------------------
+
+question 2 :
+
+theta <- function(D1App,D2App)
+{
+	rbind(apply(D1App,2,mean),apply(D2App,2,mean))
+}
+
+
+theta <- theta(D1App,D2App)
+
+
+regleEuclidienne= function(x,Theta)
+{	
+	d1 <- (x[1]-Theta[1,1])^2 + (x[2]-Theta[1,2])^2
+	d2 <- (x[1]-Theta[2,1])^2 + (x[2]-Theta[2,2])^2
+	res = (d1 > d2) + 1
+	res
+}
+
+erreurEstimee = function (D1Test, D2Test, Regle , Theta)
+{	
+	classement1 = apply(D1Test,1,Regle,Theta = Theta)
+	classement2 =  apply(D2Test,1,Regle,Theta = Theta)
+	probaderreur = sum ((classement1==2),(classement2==1))/600
+	probaderreur
+}
+
+D1Test <- mvrnorm(300, mu1, Sigma1)
+D2Test <- LoiNormal(1/4,5)
+
+test <- erreurEstimee(D1Test,D2Test,regleEuclidienne,theta)
+test
+
+boucle <- function()
+{
+	res = matrix (nrow=1, ncol=10)
+	for (i in 1:10)
+	{
+		D1Test <- mvrnorm(300, mu1, Sigma1)
+		D2Test <- LoiNormal(1/4,5)
+		test <- erreurEstimee(D1Test,D2Test,regleEuclidienne,theta)
+		res[i] <- test
+	}
+	moyenne <- apply (res,1,mean)
+}

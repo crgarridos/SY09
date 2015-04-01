@@ -1,0 +1,358 @@
+# TP4
+library(MASS)
+
+# Donnees des crabes
+# Utilisation des variables FL et RW ( echelle logarithmique)
+x <- log(cbind(crabs$FL,crabs$RW))
+n <- dim(x)[1]
+
+# Separation selon la couleur
+couleur <- rep('black',n)
+couleur[crabs$sp == "O"] <- 'magenta'
+plot(x,col=couleur)
+
+
+# LDA
+T <- as.factor(couleur)
+x.lda <- lda(x,T) 
+#x.lda <- lda(x,crabs$sp) 
+str(x.lda) # voir toutes les données
+
+# QDA
+T <- as.factor(couleur)
+x.qda <- qda(x,T)
+
+
+
+# Visulisation des frontieres de decision
+# Choix d’une grille
+len <- 50
+xp <- seq(min(x[,1]),max(x[,1]), length=len)
+yp <- seq(min(x[,2]),max(x[,2]), length=len)
+grille <- expand.grid(z1=xp,z2=yp)
+
+# LDA
+Z <- predict(x.lda,grille)
+Z <- Z$post
+zp <- Z[,1] - Z[,2]
+contour(xp, yp, matrix(zp, len), add=TRUE, levels=0, drawlabels=FALSE,col='green')
+
+
+Z <- predict(x.qda,grille)
+Z <- Z$post
+zp <- Z[,1] - Z[,2]
+contour(xp, yp, matrix(zp, len), add=TRUE, levels=0, drawlabels=FALSE,col='blue')
+
+#echantillon d'apprentissage
+#Calcul d'erreur sur l'ensemble d'apprentissage
+test <- x
+col <- couleur
+M <- dim(test)[1]
+C <- rep(1,M)
+C[col == "magenta"] <- 2
+
+#Pour LDA
+Z <- predict(x.lda,test)
+erreur.lda <- sum(Z$class != col)/M
+
+# Pour QDA
+Z <- predict(x.qda,test)
+erreur.qda <- sum(Z$class != col)/M
+
+
+# Partition des individus en deux sous-ensembles: apprentissage et test
+choix <- sample(c(1,2),size=n,prob=c(0.3,0.7),replace=TRUE)
+appr <- x[choix==1,]
+test <- x[choix==2,]
+
+
+#echantillon test
+# Methode de l'echantillon test
+appr.col <- couleur[choix==1]
+test.col <- couleur[choix==2]
+M <- dim(test)[1]
+C <- rep(1,M)
+C[test.col == "magenta"] <- 2
+
+
+#Calcul d'erreur
+# LDA
+T <- as.factor(appr.col)
+appr.lda <- lda(appr,T)
+Z <- predict(appr.lda,test) # predict donne la classe qui prédit avec la nouvelle regle pda!!!
+erreur.lda <- sum(Z$class != test.col)/M
+
+
+
+# QDA
+T <- as.factor(appr.col)
+appr.qda <- qda(appr,T)
+erreur.qda <- sum(Z$class != test.col)/M
+Z <- predict(appr.qda,test)
+
+
+help(predict)
+fonction générique pour la prédiction d'objets
+
+help(predict.lda)
+fonction qui hérite de predict pour la prédiction dun objet lda
+
+========================
+question 4
+========================
+
+
+
+
+echantillon = function(Size){
+#echantillon d'apprentissage
+#Calcul d'erreur sur l'ensemble d'apprentissage
+
+res = NULL
+
+x <- log(cbind(crabs$FL,crabs$RW))
+b = sample(c(1:200),size = Size,replace =TRUE)
+x2 = x[b,1:2]
+
+
+couleur <- rep('black',Size)
+couleur[crabs$sp[b] == "O"] <- 'magenta'
+
+# LDA
+T <- as.factor(couleur)
+x2.lda <- lda(x2,T[1:Size]) 
+
+# QDA
+T <- as.factor(couleur)
+x2.qda <- qda(x2,T[1:Size])
+
+
+test <- x2
+col <- couleur
+M <- dim(test)[1]
+C2 <- rep(1,M)
+C2[col == "magenta"] <- 2
+
+#Pour LDA
+Z <- predict(x2.lda,test)
+erreur1.lda <- sum(Z$class != col)/M
+
+
+# Pour QDA
+Z <- predict(x2.qda,test)
+erreur1.qda <- sum(Z$class != col)/M
+
+
+# Partition des individus en deux sous-ensembles: apprentissage et test
+choix <- sample(c(1,2),size=Size,prob=c(0.3,0.7),replace=TRUE)
+appr <- x2[choix==1,]
+test <- x2[choix==2,]
+
+
+#echantillon test
+# Methode de l'echantillon test
+appr.col <- couleur[choix==1]
+test.col <- couleur[choix==2]
+M <- dim(test)[1]
+C <- rep(1,M)
+C[test.col == "magenta"] <- 2
+
+
+#Calcul d'erreur
+# LDA
+T <- as.factor(appr.col)
+appr.lda <- lda(appr,T)
+Z <- predict(appr.lda,test) # predict donne la classe qui prédit avec la nouvelle regle pda!!!
+erreur2.lda <- sum(Z$class != test.col)/M
+
+
+
+# QDA
+T <- as.factor(appr.col)
+appr.qda <- qda(appr,T)
+Z <- predict(appr.qda,test)
+erreur2.qda <- sum(Z$class != test.col)/M
+
+res$e1lda =  erreur1.lda
+res$e1qda = erreur1.qda
+res$e2lda = erreur2.lda
+res$e2qda = erreur2.qda
+
+res
+}
+
+test = echantillon(133)
+
+
+
+====================================================================================
+
+
+
+
+
+
+echantillon2 = function(Size){
+#echantillon d'apprentissage
+#Calcul d'erreur sur l'ensemble d'apprentissage
+
+res = NULL
+
+x <- log(cbind(crabs$FL,crabs$RW))
+b = sample(c(1:200),size = Size,replace =TRUE)
+x2 = x[b,1:2]
+
+
+couleur <- rep('black',Size)
+couleur[crabs$sp[b] == "O"] <- 'magenta'
+
+# LDA
+T <- as.factor(couleur)
+x2.lda <- lda(x2,T[1:Size]) 
+
+# QDA
+T <- as.factor(couleur)
+x2.qda <- qda(x2,T[1:Size])
+
+
+test <- x2
+col <- couleur
+M <- dim(test)[1]
+C2 <- rep(1,M)
+C2[col == "magenta"] <- 2
+
+#Pour LDA
+Z <- predict(x2.lda,test)
+erreur1.lda <- sum(Z$class != col)/M
+
+
+# Pour QDA
+Z <- predict(x2.qda,test)
+erreur1.qda <- sum(Z$class != col)/M
+
+
+# Partition des individus en deux sous-ensembles: apprentissage et test
+choix <- sample(c(1,2),size=Size,prob=c(0.1,0.9),replace=TRUE)
+appr <- x2[choix==1,]
+test <- x2[choix==2,]
+
+
+#echantillon test
+# Methode de l'echantillon test
+appr.col <- couleur[choix==1]
+test.col <- couleur[choix==2]
+M <- dim(test)[1]
+C <- rep(1,M)
+C[test.col == "magenta"] <- 2
+
+
+#Calcul d'erreur
+# LDA
+T <- as.factor(appr.col)
+appr.lda <- lda(appr,T)
+Z <- predict(appr.lda,test) # predict donne la classe qui prédit avec la nouvelle regle pda!!!
+erreur2.lda <- sum(Z$class != test.col)/M
+
+
+
+# QDA
+T <- as.factor(appr.col)
+appr.qda <- qda(appr,T)
+Z <- predict(appr.qda,test)
+erreur2.qda <- sum(Z$class != test.col)/M
+
+res$e1lda =  erreur1.lda
+res$e1qda = erreur1.qda
+res$e2lda = erreur2.lda
+res$e2qda = erreur2.qda
+
+res
+}
+
+test = echantillon2(133)
+
+
+
+
+=================================================================================
+
+
+
+echantillon3 = function(Size){
+#echantillon d'apprentissage
+#Calcul d'erreur sur l'ensemble d'apprentissage
+
+res = NULL
+
+x <- log(cbind(crabs$FL,crabs$RW))
+b = sample(c(1:200),size = Size,replace =TRUE)
+x2 = x[b,1:2]
+
+
+couleur <- rep('black',Size)
+couleur[crabs$sp[b] == "O"] <- 'magenta'
+
+# LDA
+T <- as.factor(couleur)
+x2.lda <- lda(x2,T[1:Size]) 
+
+# QDA
+T <- as.factor(couleur)
+x2.qda <- qda(x2,T[1:Size])
+
+
+test <- x2
+col <- couleur
+M <- dim(test)[1]
+C2 <- rep(1,M)
+C2[col == "magenta"] <- 2
+
+#Pour LDA
+Z <- predict(x2.lda,test)
+erreur1.lda <- sum(Z$class != col)/M
+
+
+# Pour QDA
+Z <- predict(x2.qda,test)
+erreur1.qda <- sum(Z$class != col)/M
+
+
+# Partition des individus en deux sous-ensembles: apprentissage et test
+choix <- sample(c(1,2),size=Size,prob=c(0.5,0.7),replace=TRUE)
+appr <- x2[choix==1,]
+test <- x2[choix==2,]
+
+
+#echantillon test
+# Methode de l'echantillon test
+appr.col <- couleur[choix==1]
+test.col <- couleur[choix==2]
+M <- dim(test)[1]
+C <- rep(1,M)
+C[test.col == "magenta"] <- 2
+
+
+#Calcul d'erreur
+# LDA
+T <- as.factor(appr.col)
+appr.lda <- lda(appr,T)
+Z <- predict(appr.lda,test) # predict donne la classe qui prédit avec la nouvelle regle pda!!!
+erreur2.lda <- sum(Z$class != test.col)/M
+
+
+
+# QDA
+T <- as.factor(appr.col)
+appr.qda <- qda(appr,T)
+Z <- predict(appr.qda,test)
+erreur2.qda <- sum(Z$class != test.col)/M
+
+res$e1lda =  erreur1.lda
+res$e1qda = erreur1.qda
+res$e2lda = erreur2.lda
+res$e2qda = erreur2.qda
+
+res
+}
+
+test = echantillon3(133)

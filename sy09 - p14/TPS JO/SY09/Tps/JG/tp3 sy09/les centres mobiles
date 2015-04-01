@@ -1,0 +1,115 @@
+========== données Iris =================
+
+library(MASS)
+library(lattice)
+library(cluster)
+data(iris)
+donnees <- NULL
+donnees$num <- iris[,c(1:4)]
+donnees$cls <- iris[,5]
+--------------------------------question 1-------------------
+
+K<- kmeans(donnees$num,2)
+plot(donnees$num, col = K$cluster)
+plot(K$cluster)
+
+
+K<- kmeans(donnees$num,3)
+plot(donnees$num, col = K$cluster)
+plot(K$cluster)
+
+K<- kmeans(donnees$num,4)
+plot(donnees$num, col = K$cluster)
+plot(K$cluster)
+
+
+--------------------------------question 2-------------------
+kmeans depend du premier point choisi!!!!!!!!!!
+stabilite <-function(N)
+{	
+	res = matrix(nrow=1, ncol=50)
+	for (i in 1:50)
+	{
+		K<-kmeans(donnees$num, N);
+		res[i]<- sum(K$withinss); //inertie intra-classe
+	}
+	res;
+}
+--------------------------------question 3-------------------
+inertie <-function()
+{	
+	inertie = matrix(nrow=100, ncol=9);
+	
+	for(k in 2:10)
+	{
+		for (i in 1:100)
+		{
+			K<-kmeans(donnees$num, k);
+			inertie[i,k-1]<- sum(K$withinss); 
+		}
+	}
+	return (inertie);
+}
+
+inertie <-function()
+{	
+	inertie = matrix(nrow=100, ncol=9);
+	resmin = matrix(nrow=1, ncol=9);
+	for(k in 2:10)
+	{	
+		for (i in 1:100)
+		{	
+			
+			K<-kmeans(donnees$num, k);
+			if(i==1)
+			{
+				resmin[1,k-1] = sum(K$withinss);
+			}
+			inertie[i,k-1]<- sum(K$withinss);
+			if( resmin[1,k-1] > inertie[i,k-1])
+				resmin[1,k-1] = inertie[i,k-1];	 
+		}
+	}
+	result<-NULL;
+	result$inertie = inertie;
+	result$min = resmin;
+	return (result);
+}
+
+result <- inertie();
+plot(c(2:10),result$min,type="l")
+
+--------------------------------question 4-------------------
+
+d = dist(donnees$num)
+h = hclust(d, method="single")
+cut <- cutree(h,3)
+
+par(mfrow=c(1,2)) 
+plot(cut)
+plot(kmeans(donnees$num,3)$cluster)
+
+
+ ========== données Crabe =================
+ 
+library(MASS)
+data(crabs)
+crabsquant <- crabs[,4:8]
+crabsquant <- crabsquant/matrix(rep(crabsquant[,4],4),nrow=dim(crabsquant)[1],byrow=F)
+
+K<- kmeans(crabsquant,4)
+
+len = dim(crabs)[1]
+class = matrix(nrow=len)
+
+class[which(crabs$sex=="F" & crabs$sp =="O"),]="F&O"
+class[which(crabs$sex=="F" & crabs$sp =="B"),]="F&B"
+class[which(crabs$sex=="M" & crabs$sp =="O"),]="M&O"
+class[which(crabs$sex=="M" & crabs$sp =="B"),]="M&B"
+
+table(K$cluster,class)
+
+d = dist(crabsquant)
+h = hclust(d, method="single")
+cut <- cutree(h,4)
+table(cut,class)

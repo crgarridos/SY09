@@ -1,0 +1,231 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf360
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\froman\fcharset0 Times-Roman;}
+{\colortbl;\red255\green255\blue255;\red20\green20\blue19;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww17920\viewh12220\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\f0\fs36 \cf0 SY 19         -        TP0\
+\
+\
+
+\fs32 1.2] Multinormalle\
+\
+
+\fs28 1) Z est la concat\'e9nation de \{ Zi ~ N(0,1) \} (i=1..p). \
+\
+--> Le vecteur moyenne mu est donc donn\'e9 par U = (0 0 \'85 0)T (vecteur colonne de dimension p).\
+--> La matrice de variance-covariance est la martrice identit\'e9 Ip.\
+\
+D'autre part, la loi gaussienne multidimensionnelle de O $ RN est donn\'e9e par : \
+\
+\pard\pardeftab720\sl380\sa120\ql\qnatural
+
+\fs24 \cf0 {{\NeXTGraphic cd3ca0491c52a5aebe938baf5f1f951e.png \width6980 \height1000 \noorient
+}¬}\pard\pardeftab720\sl380\sa120\ql\qnatural
+
+\fs28 \cf0 \
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+\cf0 On obtient donc la loi de Z : \
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\fs24 \cf0 {{\NeXTGraphic a1a93d5880f6653840f9882e40a6a7af.png \width6700 \height1000 \noorient
+}¬}\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\fs28 \cf0 \
+\
+\
+\
+2) ??\
+\
+3) ?? \
+\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\b \cf0 \ul \ulc0 --> Generation : 
+\b0 \ulnone \
+\
+> sigma = matrix(c(2, 1, 1, 2), 2, 2,TRUE)\
+> sigma\
+     [,1] [,2]\
+[1,]    2    1\
+[2,]    1    2\
+> mu = c(1,2)\
+> echantillon = mvrnorm(1000, mu, sigma)\
+\
+\
+> colMeans(echantillon)\
+[1] 0.9373703 2.0018581\
+\
+on obtient : \'fb = (0.9373, 1.0018)\
+\
+\
+> var(echantillon)\
+         [,1]     [,2]\
+[1,] 1.961148 1.066595\
+[2,] 1.066595 2.079062\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\fs23\fsmilli11955 \cf2 \
+--> Les estimateurs de mu et sigma, bien que diff\'e9rents, sont proches des valeurs th\'e9oriques.\
+\
+\
+\
+\
+\
+
+\fs35\fsmilli17955 2] M\'e9lange : 
+\fs31\fsmilli15955 \
+
+\fs23\fsmilli11955 \
+D1 = matrix(c(cos(-pi/3), sin(-pi/3), -sin(-pi/3), cos(-pi/3)), 2,2,TRUE)\
+D2 = matrix(c(cos(-pi/6), sin(-pi/6), -sin(-pi/6), cos(-pi/6)), 2,2,TRUE)\
+D3 = matrix(c(cos(pi/6), sin(pi/6), -sin(pi/6), cos(pi/6)), 2,2,TRUE)\
+\
+A = matrix(c(1.5,0,0,1/1.5),2,2,TRUE)\
+\
+sigma1 = 2 * t(D1) %*% A%*% D1\
+sigma2 = 1 * t(D2) %*% A %*% D2\
+sigma3 = 1 * t(D3) %*% A %*% D3\
+\
+mu1 = matrix(c(-3,8), 2,1)\
+mu2 = matrix(c(-5,10), 2,1)\
+mu3 = matrix(c(-1,10), 2,1)\
+\
+Y <- function(x)\
+\{\
+	y <- 1/2 * mvdnorm(x,mu1,sigma1) + 1/4 * mvdnorm(x,mu2,sigma2) + 1/4 * mvdnorm(x,mu3,sigma3) \
+	return(y)\
+\}\
+\
+X <-  rbind( 
+\fs28 \cf0 mvrnorm(500, mu1, sigma1), 
+\fs23\fsmilli11955 \cf2  
+\fs28 \cf0 mvrnorm(250, mu2, sigma2), mvrnorm(250, mu3, sigma3))\
+
+\fs23\fsmilli11955 \cf2 \
+\
+\ul --> Affichage des courbes : \ulnone \
+\
+# formation de la grille de points \
+Xaff1 <- seq(from=-8,to=6,by=0.5) \
+naff1 <- length(Xaff1) \
+Xaff2 <- seq(from=-2,to=14,by=0.5) \
+naff2 <- length(Xaff2)\
+Xaff <- cbind(rep.int(Xaff1,times=rep(naff2,naff1)),rep(Xaff2,naff1))\
+\
+# calcul des valeurs de la fonction \
+valeurs <- Y(Xaff)\
+\
+plot(X) \
+contour(Xaff1, Xaff2, matrix(valeurs,nrow=naff1,byrow=T), add=T, drawlabels=FALSE)\
+\
+\
+\
+\
+
+\fs33\fsmilli16955 3] Variation des Melanges :\
+
+\fs23\fsmilli11955 \
+\
+\
+X1 <-  rbind( 
+\fs28 \cf0 mvrnorm(600, mu1, sigma1), 
+\fs23\fsmilli11955 \cf2  
+\fs28 \cf0 mvrnorm(200, mu2, sigma2), mvrnorm(200, mu3, sigma3))\
+
+\fs23\fsmilli11955 \cf2 X2 <-  rbind( 
+\fs28 \cf0 mvrnorm(800, mu1, sigma1), 
+\fs23\fsmilli11955 \cf2  
+\fs28 \cf0 mvrnorm(100, mu2, sigma2), mvrnorm(100, mu3, sigma3))\
+
+\fs23\fsmilli11955 \cf2 X3 <-  rbind( 
+\fs28 \cf0 mvrnorm(980, mu1, sigma1), 
+\fs23\fsmilli11955 \cf2  
+\fs28 \cf0 mvrnorm(10, mu2, sigma2), mvrnorm(10, mu3, sigma3))
+\fs23\fsmilli11955 \cf2 \
+\
+-------------------------------------------------------------------\
+Y1 <- function(x)\
+\{\
+	y <- 0.6 * mvdnorm(x,mu1,sigma1) + 0.2 * mvdnorm(x,mu2,sigma2) + 0.2 * mvdnorm(x,mu3,sigma3) \
+	return(y)\
+\}\
+\
+valeurs <- Y1(Xaff)
+\f1 \
+
+\f0 plot(X1) \
+contour(Xaff1, Xaff2, matrix(valeurs,nrow=naff1,byrow=T), add=T, drawlabels=FALSE)\
+\
+\
+\
+Y2 <- function(x)\
+\{\
+	y <- 0.8 * mvdnorm(x,mu1,sigma1) + 0.1 * mvdnorm(x,mu2,sigma2) + 0.1 * mvdnorm(x,mu3,sigma3) \
+	return(y)\
+\}\
+\
+valeurs <- Y2(Xaff)
+\f1 \
+
+\f0 plot(X2) \
+contour(Xaff1, Xaff2, matrix(valeurs,nrow=naff1,byrow=T), add=T, drawlabels=FALSE)\
+\
+\
+\
+Y3 <- function(x)\
+\{\
+	y <- 0.98 * mvdnorm(x,mu1,sigma1) + 0.01 * mvdnorm(x,mu2,sigma2) + 0.01 * mvdnorm(x,mu3,sigma3) \
+	return(y)\
+\}\
+\
+valeurs <- Y3(Xaff)
+\f1 \
+
+\f0 plot(X3) \
+contour(Xaff1, Xaff2, matrix(valeurs,nrow=naff1,byrow=T), add=T, drawlabels=FALSE)\
+\
+\
+\
+estimations des param\'e8tres : \
+\
+mu1 = (3,8)\
+mu2 = (-5,10)\
+mu3= (-1,10)\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\fs28 \cf2 colMeans(X1)\
+var(X1)\
+\
+mu = (-3.004687  8.791557)\
+\
+sigma =  2.8976644 -0.3014796\
+		-0.3014796  2.6831598
+\fs23\fsmilli11955 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 \
+Cette valeur est tr\'e8s proche de l'esp\'e9rance de la premi\'e8re gaussi\'e8ne. Ceci s'explique par le fait que c'est \'e0 X1 que l'on a donn\'e9 le plus d'importance.\
+\
+\
+------------------------------------------------\
+\
+mvdnorm <- function(X, mu, Sigma)\
+\{\
+	# computes the density of a multivariate normal distribution \
+	# with mean mu and covariance matrix Sigma \
+	# at the points specified in X \
+	# Benjamin Quost, 2009.09.13 \
+\
+	n <- dim(X)[1]\
+	p <- dim(X)[2]\
+\
+	Xc <- X - matrix(rep(mu,n),nrow=n,byrow=T)\
+	density <- exp(-1/2*diag(Xc%*%ginv(Sigma)%*%t(Xc))) / ((2*pi)^(p/2)*det(Sigma)^1/2)\
+	return(density)\
+\}\
+}

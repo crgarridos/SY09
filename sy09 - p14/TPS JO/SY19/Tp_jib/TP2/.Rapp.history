@@ -1,0 +1,304 @@
+data(crabs)
+crabsquant<-crabs[,4:8]
+attach(mtcars)#
+par(mfrow=c(2,2))
+pairs(crabsquant,main="Donnees sur les crabes - Comparaison en fonction du sexe",pch=21,bg=c("red","green3")[crabs$sex])
+pairs(crabsquant,main="Donn√©es sur les crabes - comparaison en fonction du genre",pch=21,bg=c("blue","orange")[crabs$sp])
+attach(mtcars)
+pairs(crabsquant,main="Donnees sur les crabes - Comparaison en fonction du sexe",pch=21,bg=c("red","green3")[crabs$sex])
+x11()
+pairs(crabsquant,main="Donn√©es sur les crabes - comparaison en fonction du genre",pch=21,bg=c("blue","orange")[crabs$sp])
+pairs(crabsquant,main="Donnees sur les crabes - comparaison en fonction du genre",pch=21,bg=c("blue","orange")[crabs$sp])
+x11()
+par( mfrow = c( 2,1) )
+pairs(crabsquant,main="Donnees sur les crabes - comparaison en fonction du genre",pch=21,bg=c("blue","orange")[crabs$sp])
+pairs(crabsquant,main="Donnees sur les crabes - Comparaison en fonction du sexe",pch=21,bg=c("red","green3")[crabs$sex])
+get( getOption( "device" ) )()
+par(mfcol = c(2,3))
+pairs(crabsquant,main="Donnees sur les crabes - comparaison en fonction du genre",pch=21,bg=c("blue","orange")[crabs$sp])
+pairs(crabsquant,main="Donnees sur les crabes - Comparaison en fonction du sexe",pch=21,bg=c("red","green3")[crabs$sex])
+split.screen(c(2, 1))
+split.screen(c(1, 2))
+pairs(crabsquant,main="Donnees sur les crabes - Comparaison en fonction du sexe",pch=21,bg=c("red","green3")[crabs$sex])
+pairs(crabsquant,main="Donnees sur les crabes - comparaison en fonction du genre",pch=21,bg=c("blue","orange")[crabs$sp])
+split.screen(c(1, 2))
+screen(1) = pairs(crabsquant,main="Donnees sur les crabes - Comparaison en fonction du sexe",pch=21,bg=c("red","green3")[crabs$sex])
+screen(2) = pairs(crabsquant,main="Donnees sur les crabes - Comparaison en fonction du sexe",pch=21,bg=c("red","green3")[crabs$sex])
+screen(1) <- pairs(crabsquant,main="Donnees sur les crabes - Comparaison en fonction du sexe",pch=21,bg=c("red","green3")[crabs$sex])
+split.screen(c(1, 2))
+plot(pairs(crabsquant,main="Donnees sur les crabes - Comparaison en fonction du sexe",pch=21,bg=c("red","green3")[crabs$sex]))
+pairs(crabsquant,main="Donnees sur les crabes - comparaison en fonction du genre",pch=21,bg=c("blue","orange")[crabs$sp])
+plot(pairs(crabsquant,main="Donnees sur les crabes - Comparaison en fonction du sexe",pch=21,bg=c("red","green3")[crabs$sex]))
+pairs(crabsquant,main="Donnees sur les crabes - Comparaison en fonction du sexe",pch=21,bg=c("red","green3")[crabs$sex])
+cor(crabquant)
+cor(crabsquant)
+A = matrix(c(3,1,2,2,4,4,3,1,3,3,6,4), nrow=4,ncol=3)
+X<-centre(A)
+source("/Users/jean-baptisteaudibert/Desktop/travail P11/SY09/TP/TP0/script0.r")
+X<-centre(A)
+S = (1/4)*t(X)%*%X
+ U = eigen(S)$vectors
+ C = X%*%U
+C[,1]%*%t(U[,1])
+C
+U
+C[,1]%*%t(U[,1])
+C[,1]%*%t(U[,1]) + C[,2]%*%t(U[,2])
+S
+X
+C[,1]%*%t(U[,1]) + C[,2]%*%t(U[,2]) + C[,3]%*%t(U[,3])
+sqrt(2)
+sqrt(2)/2
+library(MASS)
+data(crabs)
+crabsquant<-crabs[,4:8]
+p <- princomp(crabsquant)
+biplot(p)
+biplot(p, main="Representation des crabes dans le premier plan factoriel")
+cor(crabsquant)
+colSums(crabsquant)
+colSums(cor(crabsquant))
+cor(crabsquant)
+colSums(cor(crabsquant))
+divis <- function(A)#
+{#
+       for (i in 1:dim(A)[1])#
+       {#
+               temp <- A[i,3];#
+               for (j in 1:5)#
+               {#
+                       A[i,j] <- A[i,j]/temp;#
+               }#
+       }#
+return (A)#
+}
+crabsquant1 <-divis(crabsquant)
+crabsquant1
+test<-crabsquant[,-CL]
+test<-crabsquant[,-3]
+test
+test<-crabsquant1[,-3]
+test
+crabsquant
+crabsquant1
+test
+acp1<-princomp(test)
+plot(acp1)
+biplot(acp1,c=rgb(red, green, blue, alpha))
+biplot(acp1,c=rgb(r,g,b,a))
+biplot(acp1,col=rgb(r,g,b,a))
+biplot(acp1)
+acp$x
+acp1$x
+acp1
+biplot(acp1,col=rgb(0,0,0,0))
+biplot(acp1,col=rgb(r,g,b,a))
+biplot(acp1,col=rgb(red,green,blue,alpha))
+biplot(acp1,col=rgb(black,green,blue,alpha))
+colors()
+biplot(acp1,col=rgb("red","green","blue","alpha"))
+biplot(acp1,col=(black,green,blue,alpha))
+c("blue","red","forestgreen","black")
+c
+colors=c("blue","red","forestgreen","black")
+colors
+biplot(acp1,col=colors)
+biplot(acp1,col=c(b,g,r,b))
+biplot(acp1,col=c(2,3))
+biplot(acp1,pc.biplot = FALSE)
+biplot(test,pc.biplot = FALSE)
+biplot(test)
+biplot(acp)
+biplot(acp1)
+plot(acp)
+plot(acp1)
+summary(acp1)
+acp1$x
+acp1$vectors
+acp1$vector
+acp1$data
+acp1$scores
+plot(acp1[,1],acp[,2])
+plot(acp1[,1],acp1[,2])
+acp1[,1]
+plot(acp1$scores[,1],acp1scores[,2])
+plot(acp1$scores[,1],acp1$scores[,2])
+  	A = matrix(c(6.0,8.0,6.0,14.5,14.0,11.0,5.5,13.0,9.0,6.0,8.0,7.0,14.5,14.0,10.0,7.0,12.5,9.5,5.0,8.0,11.0,15.5,12.0,5.5,14.0,8.5,12.5,5.5,8.0,9.5,15.0,12.5,7.0,11.5,9.5,12.0,8.0,9.0,11.0,8.0,10.0,13.0,10.0,12.0,18.0), nrow=9,ncol=5)
+acp<-princomp(A)
+acp$cov
+acp$center
+acp$loadings
+acp$sdev
+acp$scores
+biplot(acp)
+acp <- prcomp(A)
+biplot(acp)
+plot(acp$x)
+acp<-princomp(A)
+plot(acp$loadings[,1],acp$loadings[,2])
+plot(acp)
+plot(acp$loadings[,1],acp$loadings[,2],type="n");text(acp$loadings[,1],acp$loadings[,2]);abline(h=0);abline(v=0)
+plot(acp$scores[,1],acp$scores[,2],type="n");text(acp$scores[,1],acp$scores[,2]);abline(h=0);abline(v=0)
+plot(-acp$scores[,1],-acp$scores[,2],type="n");text(axe1,axe2);abline(h=0);abline(v=0)
+plot(acp$scores[,1],acp$scores[,2],type="n", xlab="Axe1", ylab="Axe2");text(acp$scores[,1],acp$scores[,2]);abline(h=0);abline(v=0)
+plot(acp$scores[,1],acp$scores[,2],type="n", xlab="Axe1", ylab="Axe2", main="Representation des individus dans le premier axe factoriel");text(acp$scores[,1],acp$scores[,2]);abline(h=0);abline(v=0)
+biplot(acp, main="Test de biplot de l'ACP")
+plot(acp, main = "Test du plot de l'ACP")
+len = dim(crabs)[1]#
+class = matrix(nrow=len)#
+#
+class[which(crabs$sex=="F" & crabs$sp =="O"),]=1#
+class[which(crabs$sex=="F" & crabs$sp =="B"),]=2#
+class[which(crabs$sex=="M" & crabs$sp =="O"),]=3#
+class[which(crabs$sex=="M" & crabs$sp =="B"),]=4
+library(MASS)
+data(crabs)
+crabsquant<-crabs[,4:8]
+len = dim(crabs)[1]#
+class = matrix(nrow=len)#
+#
+class[which(crabs$sex=="F" & crabs$sp =="O"),]=1#
+class[which(crabs$sex=="F" & crabs$sp =="B"),]=2#
+class[which(crabs$sex=="M" & crabs$sp =="O"),]=3#
+class[which(crabs$sex=="M" & crabs$sp =="B"),]=4
+xyplot(predict(acp)[,2]~predict(acp)[,1], group = class,xlab ="frontal lobe" ,ylab ="rear width")
+load(".RData")
+xyplot(predict(acp)[,2]~predict(acp)[,1], group = class,xlab ="frontal lobe" ,ylab ="rear width")
+install.packages("lattice")
+xyplot(predict(acp)[,2]~predict(acp)[,1], group = class,xlab ="frontal lobe" ,ylab ="rear width")
+library(MASS)
+data(crabs)
+crabsquant<-crabs[,4:8]
+acp<-princomp(crabsquant)
+len = dim(crabs)[1]#
+class = matrix(nrow=len)#
+#
+class[which(crabs$sex=="F" & crabs$sp =="O"),]=1#
+class[which(crabs$sex=="F" & crabs$sp =="B"),]=2#
+class[which(crabs$sex=="M" & crabs$sp =="O"),]=3#
+class[which(crabs$sex=="M" & crabs$sp =="B"),]=4
+xyplot(predict(res)[,2]~predict(res)[,1], group = class,xlab ="frontal lobe" ,ylab ="rear width")
+xyplot(predict(acp)[,2]~predict(acp)[,1], group = class,xlab ="frontal lobe" ,ylab ="rear width")
+divis <- function(A)#
+{#
+       for (i in 1:dim(A)[1])#
+       {#
+               temp <- A[i,3];#
+               for (j in 1:5)#
+               {#
+                       A[i,j] <- A[i,j]/temp;#
+               }#
+       }#
+return (A)#
+}
+crabs1 <-divis(crabsquant)
+crabs1
+crabs1 <- crabs1[,-3]
+crabs1
+res<-princomp(crabs1)
+xyplot(predict(res)[,2]~predict(res)[,1], group = class,xlab ="frontal lobe" ,ylab ="rear width")
+xyplot(predict(res)[,2]~predict(res)[,1], group = class,xlab ="axe1" ,ylab ="axe2", main="affichage du resultat de l'ACP des crabes avec traitement préalable")
+xyplot(predict(res)[,2]~predict(res)[,1], group = class,xlab ="axe1" ,ylab ="axe2", main="Affichage du resultat de l'ACP des crabes avec traitement préalable")
+xyplot(predict(res)[,2]~predict(res)[,1], group = class,xlab ="axe1" ,ylab ="axe2", main="Affichage du resultat de l'ACP sur les crabes avec traitement préalable")
+biplot(res)
+biplot(res, main="Biplot de l'ACP sur les crabes avec traitement préalable")
+#
+ A = matrix(c(3,1,2,2,4,4,3,1,3,3,6,4), nrow=4,ncol=3)
+ X<-centre(A)
+source("/Users/jean-baptisteaudibert/Desktop/travail P11/SY09/TP/TP0/script0.r")
+ X<-centre(A)
+S = (1/4)*t(X)%*%X
+ U = eigen(S)$vectors
+C = X%*%U
+plot(-1:1,-1:1,type="n",xlab='Axe 1',ylab = 'Axe 2')
+valp <- eigen(S)$values
+L<-diag(valp)
+D <- diag(1/(sqrt((4-1)/4)*sd(centre(A)))) %*% vecp %*% sqrt(L)
+vecp <- eigen(S)$vectors
+D <- diag(1/(sqrt((4-1)/4)*sd(centre(A)))) %*% vecp %*% sqrt(L)
+plot(-1:1,-1:1,type="n",xlab="Axe 1",ylab="Axe 2")#
+text(D[,1],D[,2]);abline(h=0);abline(v=0)#
+curve(-sqrt(1-x^2),-1,1,add=TRUE)#
+curve(sqrt(1-x^2),-1,1,add=TRUE)
+main="representation"
+plot(-1:1,-1:1,type="n",xlab="Axe 1",ylab="Axe 2", main = "Representation des 3 variables dans le premier plan factoriel")#
+text(D[,1],D[,2]);abline(h=0);abline(v=0)#
+curve(-sqrt(1-x^2),-1,1,add=TRUE)#
+curve(sqrt(1-x^2),-1,1,add=TRUE)
+library(MASS)
+data(iris)
+donnees <- NULL
+donnees$num <- iris[,c(1:4)]
+donnees$cls <- iris[,5]
+km<-kmeans(donnees$num,2)
+km
+table(km$cluster)
+table(km$cluster, donnees$cls)
+plot(table(km$cluster, donnees$cls))
+km2<-kmeans(donnees$num,2)
+km3<-kmeans(donnees$num,3)
+km4<-kmeans(donnees$num,4)
+par(mfrow=c(1,3))
+plot(table(km2$cluster, donnees$cls),main="Partition des iris en deux classes")
+plot(table(km3$cluster, donnees$cls),main="Partition des iris en trois classes")
+plot(table(km4$cluster, donnees$cls),main="Partition des iris en quatres classes")
+par(mfrow=c(1,3))
+plot(table(km2$cluster, donnees$cls),main="Partition des iris en deux classes",col = c("red","green","blue")[donnees$cls])
+plot(table(km2$cluster, donnees$cls),col = c("red","green","blue")[donnees$cls],main="Partition des iris en deux classes",col = c("red","green","blue")[donnees$cls])
+plot(table(km2$cluster, donnees$cls),col = c("red","green","blue")[donnees$cls],main="Partition des iris en deux classes")
+barplot(table(km2$cluster, donnees$cls),col = c("red","green","blue")[donnees$cls],main="Partition des iris en deux classes")
+barplot(table(km2$cluster, donnees$cls),col = c("red","green","blue"),main="Partition des iris en deux classes")
+table(km$cluster, donnees$cls)
+t(table(km$cluster, donnees$cls))
+barplot(t(table(km2$cluster, donnees$cls)),col = c("red","green","blue"),main="Partition des iris en deux classes")
+mut<-read.table("mutations.txt", header=F, row.names=1)
+mut<-read.table("mutations.txt", header=F, row.names=1)
+mut<-read.table("mutations2.txt", header=F, row.names=1)
+hclustcomp <- hclust(as.dist(mutations), method = "complete")
+mutations <- mut
+hclustcomp <- hclust(dist(mutations), method = "complete")
+hclustmoy <- hclust(dist(mutations), method = "average")
+hclustmin <- hclust(dist(mutations), method = "single")
+hclustward <- hclust(dist(mutations)^2, method = "ward")
+attach(mtcars)
+par(mfrow=c(2,2))
+plot(hclustcomp, main="Dendogramme obtenu avec le critère de lien maximum")
+plot(hclustmoy, main="Dendogramme obtenu avec le critère de lien moyen")
+plot(hclustmin, main="Dendogramme obtenu avec le critère de lien minimum")
+plot(hclustward, main="Dendogramme obtenu avec la méthode de ward")
+attach(mtcars)
+par(mfrow=c(2,2))
+plot(hclustcomp, main="Dendogramme - Critère de lien maximum")
+hclustcomp <- hclust(as.dist(mutations), method = "complete")
+plot(hclustcomp)
+hclustcomp <- hclust(as.dist(mutations), method = "complete")
+hclustmoy <- hclust(as.dist(mutations), method = "average")
+hclustmin <- hclust(as.dist(mutations), method = "single")
+hclustward <- hclust(dist(mutations)^2, method = "ward")
+attach(mtcars)
+par(mfrow=c(2,2))
+plot(hclustcomp, main="Dendogramme - Critère du lien maximum", xlab="Especes", ylab="distance")
+plot(hclustmoy, main="Dendogramme - Critère du lien moyen", xlab= "Especes", ylab ="distance")
+plot(hclustmin, main="Dendogramme - Critère du lien minimum", xlab="Especes", ylab = "distance")
+plot(hclustward, main="Dendogramme - Méthode de ward", xlab = "Especes", ylab = "distance^2")
+library(MASS)#
+donnees <- NULL#
+data(iris)#
+donnees$num <- iris[,c(1:4)]#
+donnees$cls <- iris[,5]
+plot(acpiris$scores, col = c("red","green","blue")[donnees$cls])
+acpiris <- princomp(donnees$num)
+plot(acpiris$scores, col = c("red","green","blue")[donnees$cls], Main="Representation des Iris dans le premier plan factoriel")
+plot(acpiris$scores, col = c("red","green","blue")[donnees$cls], main="Representation des Iris dans le premier plan factoriel")
+plot(acpiris$scores, col = c("red","green","blue")[donnees$cls], main="Representation des Iris dans le premier plan factoriel")
+plot(hclust(dist(donnees$num)^2,method = "ward"), main = "Dendogramme des données iris - méthode de Ward")
+plot(hclust(dist(donnees$num)^2,method = "ward"), main = "Dendogramme des données iris - méthode de Ward",xlab="Especes",ylab="Distance")
+plot(hclust(as.dist(donnees$num)^2,method = "ward"), main = "Dendogramme des données iris - méthode de Ward",xlab="Especes",ylab="Distance")
+libraby(cluster)
+library(cluster)
+diana(donnees$num)
+plot(diana(donnees$num))
+dia = diana(donnees$num)#
+plot(dia,hang=-1,main = "Dendogramme de Diana")
+dia = diana(donnees$num)#
+plot(dia,hang=-1,main = "Dendogramme de Diana - Classification hierarchique descendante des iris")

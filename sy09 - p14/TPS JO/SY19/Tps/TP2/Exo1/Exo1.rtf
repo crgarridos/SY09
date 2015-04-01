@@ -1,0 +1,120 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf360
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red20\green20\blue19;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww16740\viewh11160\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 Exo1 : \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\fs25\fsmilli12963 \cf2 library(MASS)\
+data(iris)\
+donnees <- NULL\
+donnees$num = iris[,c(1:4)]\
+donnees$cls = iris[,5]\
+\
+\
+1) \
+k2 <- kmeans(donnees$num, 2)\
+k3 <- kmeans(donnees$num, 3)\
+k4 <- kmeans(donnees$num, 4)\
+\
+pairs(donnees$num, col=c("red","green","blue")[donnees$cls], pch = c(21,23,24)[k2$cluster])\
+pairs(donnees$num, col=c("red","green","blue")[donnees$cls], pch = c(21,23,24)[k3$cluster])\
+pairs(donnees$num, col=c("red","green","blue")[donnees$cls], pch = c(21,23,24, 25)[k4$cluster])    // un signe de plus pour la 4eme classe.\
+\
+\
+2) Valeur moyenne des clusters et des inerties intra classes.\
+\
+intra <- function()\
+\{\
+	res <- matrix( nrow=100, ncol=1);\
+	for( i in 1:100)\
+	\{\
+		K <- kmeans(donnees$num, 3);\
+		res[i,1] <- sum(K$withinss);\
+	\}\
+	m <- min( res[,1])\
+	M <- max( res[,1])\
+	moy <- mean(res[,1])\
+\
+	return (list(intra=res, min=m, max=M, avg =moy) );\
+\}\
+\
+$min\
+[1] 78.85144\
+\
+$max\
+[1] 142.7535\
+\
+$avg\
+[1] 89.7148\
+\
+--> Visuellement, le partitionnement est different a chaque ex\'e9cution de la m\'e9thode k-means, certains sont meilleurs que d'autres.\
+La comparaison des valeurs min, moy et max de l'inertie intra classe confirme la grande variation de cette m\'e9thode.\
+\
+3) Nombre de classes optimales :\
+\
+inertie <- function()\
+\{\
+	res <- matrix(nrow=4, ncol=1);\
+	for(j in 2:5)\
+	\{\
+		for( i in 1:100 )\
+		\{\
+			K = kmeans(donnees$num, j);\
+			res[j] = sum(K$withinss);\
+		\}		\
+	\}\
+	return(res);\
+\}\
+\
+--> plot : m\'e9thode du coude, on choisit k=3 classes pour avoir une classification optimale.\
+\
+\
+\
+\
+4) Comparaison de partition reelle et partition en k = 3 classes.\
+\
+--> inertie intra classe = variance pour chaque classe (sans le 1/nk)\
+Pour 1 classe, on a qu'a calculer la variance du nuage et on multiplie par n, (ou n-1 dans R car VAR est la variance empirique corrig\'e9e).\
+\
+\ul on a : \ulnone \
+setosa = iris[1:50,1:4]\
+w1 = sum( diag(49 * var(setosa)) )\
+\
+versicolor = iris[51:100,1:4]\
+w2 = sum( diag(49 * var(versicolor)) )\
+\
+virginia = iris[101:150,1:4]\
+w3 = sum( diag(49 * var(virginia)) )\
+\
+w1 = 15.151\
+w2 = 30.6164\
+w3 = 43.53\
+ w = (w1 + w2 + w3) = 89.2974\
+\
+On avait : wmoy = 89.7148 et min = 78.85144.\
+L'inertie interclasse r\'e9elle est bien inf\'e9rieure a celle trouv\'e9e par les kmeans.\
+\
+D'autre part : \
+\
+intra3 <- function()\
+\{\
+	res = matrix(nrow=100,ncol=3)\
+	for( i in 1:100)\
+	\{\
+		K <- kmeans(donnees$num, 3);\
+		res[i,1] <- K$withinss[1];\
+		res[i,2] <- K$withinss[2];\
+		res[i,3] <- K$withinss[3];\
+\
+	\}\
+	return (colMeans(res));\
+\}\
+\
+On obtient : 26.51234 33.21364 36.37902. Ces valeurs sont proches des inertie intra classe r\'e9elles. Elles peuvent \'eatre inf\'e9rieures car la m\'e9thode des k-means peut trouver parfois de meilleures classes que celles r\'e9elles.\
+\
+\
+}

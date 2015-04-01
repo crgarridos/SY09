@@ -1,0 +1,351 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[francais]{babel}
+\usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{color}
+\usepackage{array}
+\setlength\abovecaptionskip{0.10ex}
+\RequirePackage{graphicx}
+\DeclareGraphicsExtensions{.pdf,.jpg,.png,.JPG}
+\RequirePackage{float}
+\usepackage{titling}
+\setlength{\droptitle}{-4cm}
+\usepackage{fullpage}
+\usepackage{amsfonts}
+
+\newcommand{\InsertFig}[1]{
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=.75\textwidth]{img/#1}
+\end{center}
+\end{figure}}
+
+\newcommand{\InsertFigTitle}[2]{
+\begin{figure}[H]
+\caption{#2}
+\begin{center}
+\includegraphics[width=.75\textwidth]{img/#1}
+\end{center}
+\end{figure}}
+
+
+\title{Rapport SY09 TP03 - Théorie de la décision}
+\author{Jean-Baptiste Audibert \& Yueqing Qin}
+\date{\today} 
+
+\begin{document}
+\maketitle
+
+\section{Classifieur euclidien} 
+
+\subsection{Création de l'échantillon}
+
+\noindent On souhaite disposer d'un échantillon de deux classes $\omega_1$ et $\omega_2$ de taille $n=600$, et dont la proportion des classes est de $0.5$. On créé donc une fonction \textbf{simul} pour ce faire.
+
+\noindent On a alors l'échantillon suivant : 
+
+\begin{itemize}
+\item Classe $\omega_1 \  \sim \ \mathcal{N}( \mu_1, \sum_1), \ \mu_1 = 
+   \left (
+   \begin{array}{ccc}
+      0 \\
+      0
+   \end{array}
+   \right ),
+\sum_1 = a_1 Id$
+\item Classe $\omega_2 \  \sim  \ \mathcal{N}( \mu_2, \sum_2), \ \mu_2 = 
+   \left (
+   \begin{array}{ccc}
+     10 \\
+     0
+   \end{array}
+   \right )
+, \sum_2 = a_2 Id$ \\
+\end{itemize}
+
+\noindent Où $a_1$ et $a_2$ varient : 
+
+\begin{itemize}
+\item $a_1=1, \ a_2 = 1$ - Jeu de données (1) 
+\item $a_1=1, \ a_2 = 6$ - Jeu de données (2) 
+\item $a_1=1, \ a_2 = 9$ - Jeu de données (3) 
+\item $a_1=5, \ a_2 = 5$ - Jeu de données (4) 
+\item $a_1=10, \ a_2 = 10$ - Jeu de données (5) \\
+\end{itemize}
+
+\noindent Qui donne l'affichage suivant : 
+
+\InsertFig{echant}
+
+\noindent On observe ici que lorsque la variance augmente, la dispersion des points dans les nuages de points augmente également, ce qui logique. On va s'intéresser ici au fait que certains points de la classe $\omega_1$ (resp. $\omega_2$), vont, lorsque la variance est suffisamment élevée, être si proche de la classe $\omega_2$ (resp. $\omega_1$), que l'on peut se tromper sur la classe à laquelle ils appartiennent.
+
+\subsection{Estimation de la probabilité d'erreur}
+
+\noindent A l'aide des fonctions \textbf{regleEuclidienne} et \textbf{erreurEstime}, nous allons la probabilité d'erreur sur le choix de la classe pour différents points $x_i$ appartenant à la classe $\omega_1$ ou $\omega_2$.
+\noindent On calcule donc cette probabilité pour les cinq jeux de données présentés précédemment, on obtient les résultats suivants : 
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+  \hline
+  Jeu (1) & Jeu (2) & Jeu (3) & Jeu (4) & Jeu (5)\\
+  \hline
+  0  \% & 1.67 \% & 2.33  \% & 1.03 \% & 5.35 \% \\
+  \hline
+\end{tabular}
+\end{center}
+
+\subsection{Estimation de l'erreur moyenne}
+
+\noindent On souhaite désormais étudier cette probabilité sur plusieurs essais. On répète donc \textit{10 fois} la génération et l'estimation de la probabilité d'erreur. On obtient les résultats suivants : \\
+\begin{center}
+\begin{tabular}{|l|c|c|c|}
+\hline
+Jeu de donné & Erreur Moyenne &Variance & Intervalle de confiance  \\
+\hline
+Jeu 1 & $0$ & $0$ & / \\
+Jeu 2 & $0,87\%$ & $3,03.10^{-5}$ & $[0,47;1,26]$ \\
+Jeu 3 & $2,53\%$ & $23,73.10^{-5}$ & $[1,43;3,64]$ \\
+Jeu 4 & $1,71\%$ & $8,79.10^{-5}$ & $[1,03;2,37]$ \\
+Jeu 5 & $6,34\%$ & $68,64.10^{-5}$ & $[4,48;8,21]$ \\ 
+\hline
+\end{tabular}
+\end{center}
+\\ \\
+\noindent On voit ici qu'il est très intéressant de réaliser plusieurs essais afin de caractériser au mieux la probabilité d'erreur. En effet, dans le premier essai, la moyenne, pour un jeu donné, n'était pas ou à peine dans l'intervalle de confiance obtenu avec $10$ essais. 
+
+\section{Etude de la règle de la règle de Bayes}
+
+\subsection{Construction de $f_1$ et $f_2$}
+
+\noindent On a, avec $X = (X_1,X_2)^T $ : \\
+\begin{itemize} 
+\item $f_{11} (x_1) \  \sim \ \mathcal{N}( -1, 1)$, \\
+\item $f_{21} (x_1) \  \sim \ \mathcal{N}( 1, 1)$, \\
+\item $f_{12} (x_2)  = f_{22} \  \sim \ \mathcal{N}( 0, 1)$, \\
+\item $f_1 (x) = f_{11} (x_1) f_{12} (x_2)$, la densité conditionnelles dans la classe $\omega_1$, \\
+\item $f_2 (x) = f_{21} (x_1) f_{22} (x_2)$, la densité conditionnelles dans la classe $\omega_2$. \\
+\end{itemize}
+
+
+\noindent Soit : 
+
+ \begin{center}
+   $$ 
+   \begin{array}{rcl}
+   f_1(x)   &=&  f_{11} (x_1) f_{12} (x_2) \\ 
+   	   &=& \displaystyle  \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} (x_1 +1)^2}.  \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} (x_2)^2}\\ \\
+	   &=& \displaystyle \frac{1}{2 \pi}    e^{-\frac{1}{2} (x_1 +1)^2 - \frac{1}{2} (x_2)^2} \\
+	       \end{array}
+   $$
+\end{center}
+
+\noindent D'où $f_1  \  \sim \ \mathcal{N}( \mu_1, \sigma_1^2)$ avec $\mu_1 =  \left (
+   \begin{array}{ccc}
+      -1 \\
+      0
+   \end{array}
+   \right )$, et $\sigma_1 = I$ \\
+   
+\noindent et
+
+\begin{center}
+   $$ 
+   \begin{array}{rcl}
+   f_2(x)   &=&  f_{21} (x_1) f_{22} (x_2) \\ 
+   	   &=& \displaystyle  \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} (x_1 -1)^2}.  \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} (x_2)^2}\\ \\
+	   &=& \displaystyle \frac{1}{2 \pi}    e^{-\frac{1}{2} (x_1 -1)^2 - \frac{1}{2} (x_2)^2} \\
+	       \end{array}
+   $$
+\end{center}
+
+\noindent D'où $f_2  \  \sim \ \mathcal{N}( \mu_2, \sigma_2^2)$ avec $\mu_2 =  \left (
+   \begin{array}{ccc}
+      1 \\
+      0
+   \end{array}
+   \right )$, et $\sigma_2 = I$ \\
+   
+\subsection{Estimation des paramètres de $f_1$ et $f_2$}
+
+\noindent Maintenant que l'on connait les densités conditionnelles dans chacune des classes, on peut estimer les paramètres intrinsèques à ces densités.
+
+\noindent Tout d'abord pour la classe $\omega_1$ : \\
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+Population & Espérance & Variance  \\
+\hline
+10 & $\left (\begin{array}{ccc} -1.50 \\0.38\end{array}\right)$ & $ \begin{pmatrix}1.17&-0.11\\-0.11&0.72\end{pmatrix}$\\ 
+100 &$\left (\begin{array}{ccc} -1.11 \\0.17\end{array}\right)$ & $ \begin{pmatrix}1.16&-0.06\\-0.06&1.04\end{pmatrix}$\\ 
+1000 & $\left (\begin{array}{ccc} -0.96 \\0.06\end{array}\right)$ & $\begin{pmatrix}1.02&-0.01\\-0.01&0.93\end{pmatrix}$\\ 
+10000 & $\left (\begin{array}{ccc} -1.00 \\0.01\end{array}\right)$ & $\begin{pmatrix}0.99&0\\0&1.01\end{pmatrix}$\\
+100000 & $\left (\begin{array}{ccc} -1 \\0.00\end{array}\right)$ & $\begin{pmatrix}1.00&0\\0&1.01\end{pmatrix}$\\ 
+\hline
+\end{tabular}
+\end{center}
+\\ \\
+\noindent Puis pour la classe $\omega_2$ : \\
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+Population & Espérance & Variance \\
+\hline
+10 & $\left (\begin{array}{ccc} -0.99 \\0.37\end{array}\right)$ & $\begin{pmatrix}0.18&-0.41\\-0.41&1.50\end{pmatrix}$\\ 
+100 & $\left (\begin{array}{ccc} 0.90 \\0.28\end{array}\right)$ &$\begin{pmatrix}0.88&-0.32\\-0.32&1.00\end{pmatrix}$\\ 
+1000 & $\left (\begin{array}{ccc} 0.98 \\-0.06\end{array}\right)$ & $ \begin{pmatrix}1.05&-0.01\\-0.01&0.99\end{pmatrix}$\\ 
+10000 & $\left (\begin{array}{ccc} 1.02 \\-0.01\end{array}\right)$ & $\begin{pmatrix}0.97&0.01\\0.01&0.98\end{pmatrix}$\\
+100000 & $\left (\begin{array}{ccc} 1.00 \\0.00\end{array}\right)$ & $\begin{pmatrix}0.99&0.00\\0.00&0.99\end{pmatrix}$\\ 
+\hline
+\end{tabular}
+\end{center}
+\\
+
+\noindent On observe que plus la population est élevée, plus on se rapproche des résultats théoriques. Ceci est dû à \textbf{la loi des grands nombres}, qui nous dit que plus la taille d'un échantillon aléatoire augmente, plus ses caractéristiques statistiques sont proches de la population réelle.
+
+\subsection{Etude des cercles d'isodensité}
+
+\noindent On souhaite montrer que les courbes d'isodensité de $f_1$ et $f_2$ sont des cercles, on pose donc 
+\begin{itemize}
+\item $f_1(x) = K_1$ où $K_1$ est une constante,
+\item $f_2(x) = K_2$ où $K_2$ est également une constante. \\
+\end{itemize}
+
+\noindent De ceci, on obtient : 
+
+\begin{center}
+   $$ 
+   \begin{array}{rcl}
+   f_1(x)   &=&  K_1 \\  \\
+   \displaystyle \frac{1}{2 \pi}    e^{-\frac{1}{2} (x_1 +1)^2 - \frac{1}{2} (x_2)^2} &=& K_1 \\ \\
+	\displaystyle e^{-\frac{1}{2} (x_1 +1)^2 - \frac{1}{2} (x_2)^2}   &=&  2 \pi K_1\\
+	(x_1 +1)^2 + (x_2)^2 &=& -2ln(2 \pi K_1)
+	       \end{array}
+   $$
+\end{center}
+
+\noindent On a bien ici un cercle de centre $c_1 = (-1,0)$, et de rayon $r_1 = \sqrt{-2ln(2 \pi K_1)}$, avec $K_1 \in ]0;1[$
+
+\noindent De même : 
+
+\begin{center}
+   $$ 
+   \begin{array}{rcl}
+   f_2(x)   &=&  K_2 \\  \\
+   \displaystyle \frac{1}{2 \pi}    e^{-\frac{1}{2} (x_1 -1)^2 - \frac{1}{2} (x_2)^2} &=& K_2 \\ \\
+   \displaystyle e^{-\frac{1}{2} (x_1 - 1)^2 - \frac{1}{2} (x_2)^2}   &=&  2 \pi K_2\\
+	(x_1 -1)^2 + (x_2)^2 &=& -2ln(2 \pi K_2)
+	       \end{array}
+   $$
+\end{center}
+
+\noindent On obtient également un cercle de centre $c_2 = (1,0)$ et de rayon $r_2 = \sqrt{-2ln(2 \pi K_2)}$, avec $K_2 \in ]0;1[$
+
+\subsection{Utilisation de la règle de Bayes}
+
+\noindent Tout d'abord, les risques associés à chacune des décisions (choix de la classe $\omega_1$ ou $\omega_2$) sont : 
+
+\begin{center}
+   $$ 
+   \begin{array}{rcl}
+ R(a_1)  &=&  c_{11}\mathbb{P}(\omega_1|x) + c_{12}\mathbb{P}(\omega_2|x) \\
+ R(a_2)  &=&  c_{21}\mathbb{P}(\omega_1|x) + c_{22}\mathbb{P}(\omega_2|x) \\
+	       \end{array}
+   $$
+\end{center}
+
+\noindent Avec $\mathbb{P}(\omega_2|x) = \frac{\pi_2 f_2(x)}{f(x)} $, $ \mathbb{P}(\omega_1|x) = \frac{\pi_1 f_1(x)}{f(x)}$ et $   f(x) = \pi_1f_1(x) + \pi_2 f_2(x)$. \\
+
+\noindent La règle de Bayes nous dit que si l'on décide $a_1$ : 
+
+\begin{center}
+   $$ 
+   \begin{array}{rcl}
+ c_{11}\mathbb{P}(\omega_1|x) + c_{12}\mathbb{P}(\omega_2|x)  &<&  c_{21}\mathbb{P}(\omega_1|x) + c_{22}\mathbb{P}(\omega_2|x) \\
+ \left(c_{11} -  c_{21} \right) \mathbb{P}(\omega_1|x) &<&   \left(c_{12} -  c_{22} \right)\mathbb{P}(\omega_2|x) \\
+ \left(c_{11} - c_{21} \right) f_1(x) \pi_1 &<& \left( c_{12} - c_{22} \right) f_2(x) \pi_2 \\ 
+  \left( c_{21} - c_{11} \right) f_1(x) \pi_1 &>& \left( c_{22} - c_{12}  \right) f_2(x) \pi_2 \\ 
+	       \end{array}
+   $$
+\end{center}
+
+\noindent Soit finalement $ \delta^* (x)$, la règle de Bayes pour ce cas : 
+
+$$\delta^* (x) = \left\{\begin{array}{ll}
+ a_1 & \mbox{ si $\frac{f_1(x)}{f_2(x)} > \left( \frac{c_{12} - c_{22}}{c_{21} - c_{11}}\right) \frac{\pi_2}{\pi_1}$}\\
+ a_2 & \mbox{ sinon }
+ \end{array}\right.$$
+ 
+ \noindent Or $c_{11} = c_{22} = 0$, donc finalement :
+ 
+ $$\delta^* (x) = \left\{\begin{array}{ll}
+ a_1 & \mbox{ si $\frac{f_1(x)}{f_2(x)} > \left( \frac{c_{12}}{c_{21}}\right) \frac{\pi_2}{\pi_1}$} \ \ (1)\\
+ a_2 & \mbox{ sinon }
+ \end{array}\right.$$
+ 
+\noindent On peut également calculer :
+ 
+ \begin{center}
+   $$ 
+   \begin{array}{rcl}
+ \frac{f_1(x)}{f_2(x)} &=&  \displaystyle \frac{\frac{1}{2 \pi}    e^{-\frac{1}{2} (x_1 +1)^2 - \frac{1}{2} (x_2)^2}}{\frac{1}{2 \pi}    e^{-\frac{1}{2} (x_1 -1)^2 - \frac{1}{2} (x_2)^2}} \\ \\
+ 			       &=& \displaystyle \frac{e^{-\frac{1}{2} (x_1 +1)^2}}{e^{-\frac{1}{2} (x_1 -1)^2}} \\ \\
+			       &=& \displaystyle \frac{e^{-\frac{1}{2}(x_1^2 + 2x_1 + 1)}}{e^{-\frac{1}{2}(x_1^2 -2x_1 +1)}} \\ \\
+			       &=& e^{-2x_1}\\
+	      \end{array}
+   $$
+\end{center}
+
+\noindent Ce qui nous donne 
+
+\begin{center}
+   $$ 
+   \begin{array}{rcl}
+ (1) \ &\Leftrightarrow &  -2x_1 > ln\left( \frac{c_{12}}{c_{21}} \frac{\pi_2}{\pi_1}\right) \\
+         &\Leftrightarrow & x_1 < \frac{-1}{2} \ ln\left( \frac{c_{12}}{c_{21}} \frac{\pi_2}{\pi_1}\right) \\
+	      \end{array}
+   $$
+\end{center}
+
+\subsection{Tracée des frontières de décision}
+
+\noindent L'équation des frontières est donc donnée par $x_1 = \frac{-1}{2} \ ln\left( \frac{c_{12}}{c_{21}} \frac{\pi_2}{\pi_1}\right)$. Traçons ces frontières pour 3 cas :  \\
+
+\begin{itemize}
+\item $c_{12} = c_{21} = 1, \ \pi_1 = \pi_2$ soit $x_1 = \frac{-1}{2} ln(1) = 0$, (cas 1)\\
+\item $c_{12} = 10, \ c_{21} = 1, \ \pi_1 = \pi_2$ soit $x_1 = \frac{-1}{2} ln(10)$, (cas 2) \\
+\item $c_{12} = c_{21} = 1, \ \pi_2 = 10\pi_1$ soit $x_1 = \frac{-1}{2} ln(10)$, (cas 3$\Leftrightarrow$ cas 2)\\
+\end{itemize} 
+
+\noindent Avec un échantillon composé de $600$ individus.
+
+\InsertFig{front}
+
+\noindent On a donc ici 3 frontières, deux \textcolor{green}{vertes} en $x_1 = \frac{-1}{2} ln(10)$ et une en \textcolor{yellow}{jaune} en $x_1 = \frac{-1}{2} ln(1) = 0$
+
+\subsection{Estimation des paramètres $\alpha$ et $\beta$}
+
+\noindent On a $\alpha = \mathbb{P}(\delta^*(\textbf{X}) = a_2 |w_1)$ et $\beta = \mathbb{P}(\delta^*(\textbf{X}) = a_1 |w_2)$, les probabilités d'erreur que l'on souhaite estimer dans les $3$ cas précédents (en fait $2$). \\
+
+\noindent Pour cela, on compte le nombre d'individus de la classe $\omega_1$ considérés, grâce à la frontière, comme étant dans la classe $\omega_2$, et on divise par la population de la classe $\omega_1$ ($\alpha$) et le nombre d'individus de la classe $\omega_2$ considérés comme étant dans la classe $\omega_1$, divisé par le nombre d'individus de la classe $\omega_2$ ($\beta$).
+
+\noindent On obtient alors :  \\
+
+\begin{itemize}
+\item cas 1 : $\hat\alpha = 0.172$, $\hat\beta = 0.173$\\
+\item cas 2 et 3 : $\hat\alpha = 0.578$, $\hat\beta = 0.014$\\
+\end{itemize} 
+
+\noindent Dans le premier cas, $\hat\alpha \cong \hat\beta$, ce qui est logique puisque les probabilités à priori sont égales, tout comme les couts d'erreur. \\
+
+\noindent  Dans le cas 3,  $\hat\alpha \gg \hat\beta$. Ceci est dû est fait que la probabilité à priori de la classe $\omega_2$ est dix fois supérieur à celle de classe $\omega_1$. Les individus de $\omega_1$, identifiés dans $\omega_2$, sont donc très nombreux, et inversement.
+
+\noindent Enfin dans le cas 2, on a également un facteur $10$ sur le cout d'erreur, d'où l'égalité des résultats.
+
+
+
+
+
+\end{document}

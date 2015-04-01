@@ -1,0 +1,123 @@
+32-15
+ls()
+source("/Users/jean-baptisteaudibert/Desktop/travail P11/SY09/TP/TP0/script0.r")
+A=matric(1:9, nrow= 3, byrow = T)
+A=matrix(1:9, nrow= 3, byrow = T)
+A
+prodtrans(A)
+t(A)%*%A
+A
+apply(A,2,max)
+p=dim(D)[2]
+p
+p=dim(A)[2]
+p
+(1+4+7)/3
+apply(A,2,mean)
+A[1]
+A
+A[,1]
+source("/Users/jean-baptisteaudibert/Desktop/travail P11/SY09/TP/TP0/script0.r")
+centre
+X
+X<-centre(A)
+source("/Users/jean-baptisteaudibert/Desktop/travail P11/SY09/TP/TP0/script0.r")
+X<-centre(A)
+X
+A
+iris<-read.table("/Users/jean-baptisteaudibert/Desktop/travail P11/SY09/TP/TP0/iris.txt")
+/Users/jean-baptisteaudibert/Desktop/travail P11/SY09/TP/TP0/
+cd /Users/jean-baptisteaudibert/Desktop/travail P11/SY09/TP/TP0/
+ls
+ls()
+source("/Users/jean-baptisteaudibert/Desktop/travail P11/SY09/TP/TP0/iris.txt")
+iris<-read.table("/Users/jean-baptisteaudibert/Desktop/travail P11/SY09/TP/TP0/iris.txt")
+iris<-read.table("/Users/jean-baptisteaudibert/Desktop/travail P11/SY09/TP/TP0/iris.txt")
+iris<-read.table("/Users/jean-baptisteaudibert/Desktop/travail P11/SY09/TP/TP0/iris.txt")
+ls
+iris<-read.table("/Users/jean-baptisteaudibert/Desktop/travail P11/SY09/TP/TP0/iris.txt")
+setwd()
+setwd(/Users/jean-baptisteaudibert/Desktop/travail P11/SY09/TP/TP0/)
+setwd("/Users/jean-baptisteaudibert/Desktop/travail P11/SY09/TP/TP0/")
+iris<-read.table("iris.txt")
+iris<-read.table("fetch.php")
+iris<-read.table(iris.txt)
+iris<-read.table("iris.txt)
+iris<-read.table("iris.txt")
+iris
+class(iris)
+class(iris$Espece)
+class(iris$Espèce)
+class(iris$Species)
+class(iris[,1])
+class(iris$LoSe)
+iris<-read.table("iris.txt", TRUE)
+iris
+iris<-read.table("iris.rtf", TRUE)
+iris2<-read.table("iris.rtf", TRUE)
+iris2
+ls()
+iris
+babel
+rm(iris)
+iris2<-read.table("iris.rtf", header = TRUE)
+iris2<-read.delim2("iris.txt")
+iris2
+iris3 = read.table("iris.txt", header = TRUE)
+iris3 = read.table("iris.txt", header=TRUE, dec=",", sep="\t")
+iris3
+iris3 = read.table("iris.txt", header=TRUE, dec=",", sep="\n")
+iris3
+iris3 = read.table("iris.txt", header=TRUE, dec=" ", sep="\n")
+iris3
+iris2<-read.table("iris.rtf", header = TRUE)
+iris2
+iris2<-read.table("iris.txt", header = TRUE)
+iris2<-read.table("iris.txt", header = TRUE)
+iris2
+rm(iris2)
+iris2<-read.table("iris.txt", header = TRUE)
+iris2
+iris3
+rm(iris3)
+ls
+ls()
+iris
+iris2<-read.table("iris.txt", header = TRUE)
+iris2
+class'iris'
+class(iris)
+class(iris$Espece)
+class(iris$Espèce)
+class(iris$Espece)
+class(iris$LoSe)
+class(iris[,1])
+class(iris[,2])
+class(iris[,3])
+iris<-read.table("iris.txt")
+iris
+class(iris$LoSe)
+class(iris$Espece)
+summary(iris)
+cor(iris[,2:5])
+plot(iris)
+boxplot(iris)
+attach(iris)
+def.par <- par(no.readonly=T) par(mfrow=c(2,2)) for(i in 2:5) hist(iris[,i]) par(def.par)
+pie(summary(iris$Espece))
+barplot(summary(iris$Espece))
+print(cor(iris[,2:5]),digits=3)
+pairs(iris[2:5],main="Les Iris",pch=21,bg=c("red","green3","blue")[iris$Espece])
+iris[2:5]
+iris
+iris$Espece
+class(iris$Espece)
+iris$factor
+factor(iris)
+class(iris[,2])
+class(iris[1,2])
+distinct
+?distinct
+iris$lape
+iris$laPe
+iris$LaPe

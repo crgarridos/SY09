@@ -1,0 +1,115 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\setlength\abovecaptionskip{0.10ex}
+\usepackage{titling}
+\setlength{\droptitle}{-4cm}
+\usepackage{fullpage}
+\RequirePackage{graphicx}
+\DeclareGraphicsExtensions{.pdf,.jpg,.png,.JPG}
+\RequirePackage{float}
+
+\usepackage{dsfont}
+
+\newcommand{\InsertFig}[1]{
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=.75\textwidth]{img/#1}
+\end{center}
+\end{figure}}
+\newcommand{\InsertFigTitle}[2]{
+\begin{figure}[H]
+\caption{#2}
+\begin{center}
+\includegraphics[width=.75\textwidth]{img/#1}
+\end{center}
+\end{figure}}
+
+\title{Rapport SY19 TP05 - Réseaux de neurones}
+\author{Thomas ABASSI \& Joan MOESCH}
+
+\begin{document}
+\maketitle
+
+\noindent Ce TP est une introduction aux réseaux de neurones. A l'aide de la fonction nnet de la librairie nnet, nous simulerons un réseau de neurones, nous étudierons son comportement et ferons varier les paramêtres.\\
+Dans la dernière partie, nous chercherons quelles valeurs de size et de decay (paramêtres) donnent les meilleurs résultats pour des données de crabes.
+
+\noindent A la fin de ce TP, nous connaitrons l'influence des paramêtres sur les réseaux de neurones ainsi que la différence entre l'analyse discriminante quadratique et l'analyse discriminante linéaire.
+
+\section*{ Question 1. }
+
+\subsection*{1) Frontières de décision}
+
+\noindent Ci-dessous, les frontières de décision obtenues avec un réseau de neurones (bleu) et les frontières de Bayes (rouge) pour le mélange de 4 vecteurs Gaussien.
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=.6\textwidth]{BayesVsRn.pdf}
+\end{center}
+\end{figure}
+
+\subsection*{2) Estimation des poids}
+
+\noindent Les poids de notre réseaux de neurones sont les suivants :
+
+\begin{center}
+$P = \begin{pmatrix}
+[1]&28.8788823&8.3440744&53.3825493&-106.5337070&69.4008001\\
+[6]&-33.6124724&102.6807359&-58.8415857&56.5035544&-2.1808703\\
+[11]&1.2888301&0.2520767&-20.8067781&-11.6369876&-3.5229020\\
+[16]&-42.1579477&28.9905417&23.1741888&9.6386434&22.7751030\\
+[21]&-11.1007213&11.6648872&-0.4817475&-12.1847979&-15.2710175\\
+[26]&-9.8486925&74.7604493&-101.5021778&-26.6435637&12.5338628\\
+[31]&36.5421363&127.6647811&-6.8851989&130.7274907&-1.9219409\\
+[36]&-23.6756992&-30.3509089&-141.3414162&-55.4818626\\
+\end{pmatrix}$
+\end{center}
+
+\noindent On remarque qu'on a 39 poids. On retrouve ce nombre en faisant: ( 2 neurones d'entrée + 1 biais ) * ( 5 neurones cachées) + ( 5 neurones cachées + 1 biais ) * 4 neurones de sortie = 3 * 5 + 6 * 4 = 39 poids.
+
+\subsection*{3-4) Même procédure mais résultats différents}
+
+\noindent Après avoir lancé plusieurs fois la procédure nnet, on s'apperçoit qu'on n'obtient pas les mêmes résultats à chaque fois pour l'estimation des poids et des frontières de décision.\\
+La raison: A chaque création d'un réseau de neurones, les poids sont initialisés aléatoirement. Par la suite, lors de l'apprentissage, les poids ne convergent pas forcément vers le même minima local. On a donc des estimations des poids et des frontières de décision différentes en fonction de l'initialisation.
+
+\section*{ Question 2. }
+
+\subsection*{1-2) Variation du paramêtre 'size'}
+
+\noindent Ci-dessous, l'apperçu graphique pour 'size' variant entre 1 et 5. rouge: $size = 1$, bleu: $size = 2$, vert: $size = 3$, jaune: $size = 4$, orange: $size = 5$. Bien sur, il y a de plus en plus de poids, mais surtout la forme des frontières est de plus en plus complexe et le nombre de points mal classés diminue lorsque 'size' augmente. Néanmoins, le nombre de points mal classés ne bouge plus trop à partir de $size = 3$
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=.6\textwidth]{size1-5.pdf}
+\end{center}
+\end{figure}
+
+\noindent En dessus de $size=5$, la complexité ne semble plus trop bouger et le nombre de points mal classés semble même augmenter.
+
+\subsection*{3-4) Variabilité du modèle}
+
+\noindent En relançant la procédure sur un nouveau jeu de données en faisant varier 'size' de 1 à 10, on s'apperçoit que pour $size = 1$, le modèle est 'le même' et plus 'size' augmente, plus le modèle est propre aux données et donc sujet à des variations.
+
+\section*{ Question 3. }
+
+\subsection*{1) Variation du paramêtre 'decay'}
+
+\noindent Ci-dessous, l'apperçu graphique pour 'decay' variant entre 0.001 et 10. rouge: $decay = 0.001$, bleu: $decay = 0.01$, vert: $decay = 0.1$, jaune: $decay = 1$, orange: $decay = 10$, orange: $decay = 10$.
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=.6\textwidth]{decayrange.pdf}
+\end{center}
+\end{figure}
+
+\subsection*{2-3) Poids et frontières}
+
+\noindent En regardant les poids, on s'apperçoit qu'en augmentant la valeur de 'decay', ces derniers ont une bien moindre amplitude. Pour $decay = 0.001$, les poids varient entre -16 et 17. Pour $decay = 10$, les poids varient entre -0.5 et 0.5. 
+\\
+Ce phénomène s'explique comme suit: 'decay' est une sorte de coefficient multiplicateur de la fonction d'erreur. Plus decay est proche de 0, moins les poids varient et leur valeurs absolues sont plus faibles.\\
+Ce changement se traduit par des frontières plus droites, moins 'biscornues', moins 'accidentées' car il y a moins d'écart entre les poids. 
+
+\end{document}

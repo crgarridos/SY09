@@ -1,0 +1,44 @@
+test <- function()
+{
+	res <- matrix( nrow=10, ncol=1);
+	for(i in 1:10)
+	{
+		k <- kmeans(donnees$num, 3);
+		res[i,1] <- sum(k$within);
+	}
+	return (res);
+}
+
+inertie <- function()
+{
+	inertie <- matrix(nrow=100, ncol=9);
+	for(k in 2:10)
+	{
+		for(i in 1:100)
+		{
+			K <- kmeans(donnees$num, k);
+			inertie[i, k-1] <- sum(K$within);
+		}
+	}
+	return(inertie);
+}
+
+inertie_min <- function()
+{
+	min <- matrix(nrow=9, ncol=1);
+	for(k in 2:10)
+	{
+		K <- kmeans(donnees$num, k);
+		min[k-1,1] <- sum(K$within);
+		for(i in 2:100)
+		{
+			K <- kmeans(donnees$num, k);
+			tmp <- sum(K$within);
+			if( tmp < min[k-1,1] )
+			{
+				min[k-1,1] <- tmp;
+			}
+		}
+	}
+	return(min);
+}

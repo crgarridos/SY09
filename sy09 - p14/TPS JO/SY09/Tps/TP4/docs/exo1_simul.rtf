@@ -1,0 +1,27 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf250
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10540\viewh8420\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 simul<-function(n,pi1, mu1,mu2,sigma1,sigma2,a,b)\
+\{\
+	n1 <- rbinom(1,n,pi1)\
+	n2 <- n - n1\
+\
+	ech1 <- mvrnorm(n1, mu1, sigma1)\
+	ech2 <- mvrnorm(n2, mu2, sigma2)\
+\
+	res <- rbind(ech1,ech2)\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+\cf0 	classe <- matrix(1: n)\
+	classe[ 1: n1 ] <- 1\
+	classe[ n1 + 1: n ] <- 2\
+	res <- cbind(ech, classe)\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+\cf0 \
+	plot(res[,1], res[,2], xlab="x1",ylab="x2", col = c("orange", "purple")[res[,3]] )\
+	abline(a,b)\
+	return(res)\
+\}}
