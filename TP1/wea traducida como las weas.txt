@@ -1,7 +1,8 @@
-En el siguiente ejemplo, utilizaremos y veremos como utilizar distintas funciones de R las cuales nos permitan realizar un ACP. Para probar estas funciones, utilizaremos los datos expuestos en el archivo notes.txt y se aplicaran todas las funciones necesarias que permitan hacer un ACP y graficar los resultados obtenidos en R gracias a las funciones plot().
+
+En el siguiente ejemplo, utilizaremos y veremos como utilizar distintas funciones de R las cuales nos permitan realizar un ACP, dándole mayor énfasis a la función princomp(). Para probar estas funciones, utilizaremos los datos expuestos en el archivo notes.txt y se aplicaran todas las funciones necesarias que permitan hacer un ACP y graficar los resultados obtenidos en R gracias a las funciones plot().
 
 
 Analizaremos la función plot y biplot
-La función plot en si presenta poca informacion relevante y representa un historigrama de los valores limpios de cada ACP. Sin embargo sabemos que los valores limpios son proporciionales a los porcentajes de inercia explicada, por lo cual la función plot(), nos entrega una buena visión del conjunto de los distintos datos.
+La función plot en si presenta poca informacion relevante y representa un historigrama de los valores limpios de cada ACP los cuales no necesitan necesariamente un grafico para para poder ser visualizados . Sin embargo sabemos que los valores limpios son proporciionales a los porcentajes de inercia explicada, por lo cual la función plot(), nos entrega una buena visión del conjunto de los distintos componentes.
 
-A diferencia de la función plot(), la función biplot() nos muestra un interés superior, ya que permite representar en una línea, una nube de distintos puntos que respresentan variables en un plano factorial. Su principal llamada choises(),  permite indicar y seleccionar los componentes principales que se desean visualizar en el grafico.
+A diferencia de la función plot(), la función biplot() nos muestra un interés superior, ya que permite representar en una línea, una nube de distintos puntos que respresentan variables en un plano factorial. Su principal función llamada choises(),  permite indicar y seleccionar los componentes principales que se desean visualizar en el grafico.
