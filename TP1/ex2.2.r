@@ -4,8 +4,8 @@ princomp(notes) #calcule les differents weas
 princomp(notes)$loadings # axes principaux
 princomp(notes)$scores # matrice ACP
 
-#centrage du tableau de données
-A= scale(notes,scale=FALSE)
+#centrage du tableau de donn?es
+A=scale(notes,scale=FALSE)
 biplot(princomp(A),main="Notes") 					#axes 1 et 2
 biplot(princomp(A),choices = c(1,3),main="Notes")	#axes 1 et 3
 
