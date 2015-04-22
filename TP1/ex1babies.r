@@ -10,7 +10,7 @@ babies[babies$age == 99, 4] <- NA
 babies[babies$height == 99, 5] <- NA
 babies[babies$weight == 999, 5] <- NA
 babies[babies$smoke == 9, 7] <- NA
-babies[babies$education == 9, 8] <- NA
+babies[babies$education == 9, 8] <- AN
 
 babies$smoke <- factor(c("NonSmoking", "Smoking", "NonSmoking", "NonSmoking")[babies$smoke + 1])
 babies$education <- factor(babies$education, ordered = T)
@@ -38,6 +38,14 @@ summary(e)
 # SELECT gestation FROM babies WHERE smoke == 'Smoking'
 c = babies$gestation[babies$smoke == 'Smoking']
 d = babies$gestation[babies$smoke == 'NonSmoking']
+boxplot(babies[babies$smoke == "Smoking", ]$gestation,
+        babies[babies$smoke == "NonSmoking", ]$gestation,
+                notch = T, 
+        outline=F,
+        names = c("Fumeuses", "Non fumeuses"),
+        ylim = c(250, 313),
+        col = c("gray","aliceblue"));
+title("Jours en gestation")
 summary(c);
 summary(d);
 
