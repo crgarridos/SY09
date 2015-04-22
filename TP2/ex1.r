@@ -8,7 +8,7 @@ D = matrix(ncol=n,nrow=n)
 # 1.- Calculer le tableau D² des distances euclidiennes associé à ces données.
 D2 = dist(Xc)^2;
 # 2. Calculer la matrice W des produits scalaires : 
-# d’une part directement à partir de X, d’autre part à partir de D².
+# d’une part directement à partir de X, d’autre part à partir de D²
 W = Xc%*%t(Xc);
 W
 In = diag(n);
