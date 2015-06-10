@@ -1,0 +1,194 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[cyr]{aeguill}
+\usepackage[francais]{babel}
+\usepackage{amsmath}
+%\usepackage{bbold}
+
+\begin{document}
+
+\title{TP4: Analyse discriminante, régression logistique}
+\author{Jean Baptiste Vivier - Marion Depuydt}
+\maketitle
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Analyse discriminante}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\subsection{Implémentation}
+%%%%%%%%%%%
+
+\subsubsection*{Rappeler les estimateurs des paramètres du modèle dans chacun de ces cas (on choisira les estimateurs sans biais).}
+
+\begin{itemize}
+  \item analyse discriminante quadratique :
+    \begin{align*}
+      & \hat{\pi}_k = \frac{n_k}{n}                         \\
+      & \hat{\mu}_k = \frac{1}{n_k}\sum_{i=1}^{n}z_{ik}x_i  \\
+      & \hat{\Sigma}_k = V_k^* = \frac{1}{n_k - 1}\sum_{i=1}^{n}z_{ik}(x_i - \hat{\mu}_k)(x_i - \hat{\mu}_k)^t                                 
+    \end{align*}
+  
+  \item analyse discriminante linéaire :
+    \begin{align*}
+      & \hat{\pi}_k = \frac{n_k}{n}                         \\
+      & \hat{\mu}_k = \frac{1}{n_k}\sum_{i=1}^{n}z_{ik}x_i  \\
+      & \hat{\Sigma} = \frac{1}{n-g}\sum_{k=1}^{g}(n_k - 1)V_k^*                          
+    \end{align*}
+  
+  \item classifieur bayésien naïf :
+    \begin{align*}
+      & \hat{\pi}_k = \frac{n_k}{n}                         \\
+      & \hat{\mu}_k = \frac{1}{n_k}\sum_{i=1}^{n}z_{ik}x_i  \\
+      & \hat{\Sigma}_k =  diag(V_k^*)                         
+    \end{align*}
+  
+\end{itemize}
+
+
+
+\subsection{Test sur données simulées}
+%%%%%%%%%%%
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Régression logistique}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Implémentation}
+%%%%%%%%%%%
+
+
+\subsection{Test sur données simulées}
+%%%%%%%%%%%
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Données réelles}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Données «Pima»}
+%%%%%%%%%%%
+
+\subsection{Données «Breast cancer Wisconsin»}
+%%%%%%%%%%%
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Annexes}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection*{adq.app}
+<<eval=FALSE>>=
+adq.app = function(Xapp,zapp){
+    parametres = list()
+    
+    for(i in 1:2){
+        Xapp_i = Xapp[zapp==i,]
+        
+        pi = sum(zapp == i) / length(zapp)
+        mu = colMeans(Xapp_i)
+        sigma = var(Xapp_i) * nrow(Xapp_i)/(nrow(Xapp_i)-1)
+        
+        parametres[[i]] = list(pi=pi,mu=mu,sigma=sigma)
+    }
+    
+    return(parametres)
+}
+@
+
+\subsubsection*{adl.app}
+<<eval=FALSE>>=
+function(Xapp,zapp){
+    parametres = list()
+    
+    sigma = 0
+    for(i in 1:2){
+        Xapp_i = Xapp[zapp==i,]
+        sigma = sigma + var(Xapp_i) * nrow(Xapp_i)
+    }
+    sigma = sigma / (nrow(Xapp) - 2)
+    
+    for(i in 1:2){
+        pi = sum(zapp == i) / length(zapp)
+        mu = colMeans(Xapp[zapp==i,])
+        
+        parametres[[i]] = list(pi=pi,mu=mu,sigma=sigma)
+    }
+    
+    return(parametres)
+}
+@
+
+\subsubsection*{nba.app}
+<<eval=FALSE>>=
+function(Xapp,zapp){
+    parametres = list()
+    
+    for(i in 1:2){
+        Xapp_i = Xapp[zapp==i,]
+        
+        pi = sum(zapp == i) / length(zapp)
+        mu = colMeans(Xapp_i)
+        sigma = diag(diag(var(Xapp_i) * nrow(Xapp_i)/(nrow(Xapp_i)-1)))
+        
+        parametres[[i]] = list(pi=pi,mu=mu,sigma=sigma)
+    }
+    
+    return(parametres)
+}
+@
+
+\subsubsection*{ad.val}
+<<eval=FALSE>>=
+function(parametres, Xtst){
+    res = matrix(0, nrow=nrow(Xtst), ncol=3)
+    f_k = matrix(0, nrow=nrow(Xtst), ncol=2)
+    
+    for(i in 1:2){
+        mu = parametres[[i]]$mu
+        sigma = parametres[[i]]$sigma 
+        f_k[,i] = mvdnorm(Xtst,mu,sigma)
+    }
+    
+    for(i in 1:2){
+        res[,i] = (f_k[,i]*parametres[[i]]$pi) / (f_k[,1]*parametres[[1]]$pi + f_k[,2]*parametres[[2]]$pi)
+    }
+    res[,3] = max.col(res)
+    
+    return(res)
+}
+
+@
+
+\end{document}

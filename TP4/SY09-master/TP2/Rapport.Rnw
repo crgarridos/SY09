@@ -1,0 +1,234 @@
+% !Rnw weave = knitr
+
+\documentclass{article}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[cyr]{aeguill}
+\usepackage[francais]{babel}
+
+
+\begin{document}
+
+\title{TP2: AFTD et Classification automatique}
+\author{Jean Baptiste Vivier - Marion Depuydt}
+\maketitle
+\section*{Exercice 1}
+
+\subsection*{Partie théorique}
+
+
+
+<<echo=FALSE>>=
+load("exo1.RData")
+@
+
+
+On centre tout d'abord la matrice X à l'aide de la matrice de centrage Q8, cela nous servira plus tard :
+<<eval=FALSE>>=
+X = Q8 %*% X
+@
+On calcule la matrice des distances euclidiennes D2 :
+<<eval=FALSE>>=
+D2 = as.matrix(dist(X))
+D2 = D2^2
+@
+<<echo=FALSE>>=
+D2
+@
+Après avoir obtenu cette matrice, on peut calculer la matrice des produits scalaires de 2 façons :
+<<>>=
+W = X %*% t(X)
+@
+
+Mais normalement, on n'aurait pas accès à X directement, il faut la déduire de la matrice des distances euclidiennes :
+<<>>=
+W = (-1/2)*Q8 %*% D2 %*% Q8
+@
+<<echo=FALSE>>=
+round(W,2)
+@
+
+
+Il reste à vérifier que W soit semi définie-positive, pour savoir si la matrice des distances était bien euclidienne :
+
+<<>>=
+eigen(W/8)$values
+@
+
+
+W est bien semi définie-positive, car ses valeurs propres sont positives ou nulles. Nous avons mis à zéro les valeurs négatives (erreurs d'arrondis de calcul du processeur), et diagonalisé les valeurs propres.
+
+<<echo=FALSE>>=
+L = eigen(W/8)$values
+L[L<0] = 0
+L = diag(L)
+@
+
+Matrice L des valeurs propres :
+
+<<echo=FALSE>>=
+L
+@
+
+
+Ensuite nous avons calculé la matrice des vecteurs propres, et l'avons normée correctement :
+<<>>=
+V = eigen(W)$vectors
+V = V*sqrt(8)  # on norme les vectors propres au sens de (1/n)*I
+@
+<<>>=
+round(V,2)
+@
+
+
+Cela nous permet d'en déduire une version approximée par AFTD de X :
+<<>>=
+Xaftd = V %*% sqrt(L)
+@
+
+Voici une comparaison graphique de X et Xaftd :
+
+
+<<echo=FALSE, fig.height=5>>=
+ par(mfrow=c(1,2))
+ plot(X, xlim=c(-5,5), ylim=c(-3,3), type="n")
+ text(X[,1],X[,2],LETTERS[1:8])
+
+ plot(Xaftd, xlim=c(-5,5), ylim=c(-3,3), type="n")
+ text(Xaftd[,1],Xaftd[,2],LETTERS[1:8])
+
+@
+
+
+On constate que les résultats sont très proches (aux dissimilarités isométriques près).
+
+Voici une fonction qui fait l'AFTD d'un tableau de distance, et fait un plot du résultat :
+
+<<eval=FALSE>>=
+AFTD = function(D,k=2){
+    D = as.matrix(D)
+    D = D^2
+    Q = diag(nrow(D))-matrix(1, nrow(D), nrow(D))/nrow(D)
+    W = (-1/2)*Q%*%D%*%Q
+    V = eigen(W/nrow(W))$vectors
+    V = V*sqrt(nrow(D))
+    L = eigen(W/nrow(W))$values
+    L[L<0] = 0
+    L = diag(L)
+    
+    C = V%*%sqrt(L)
+    plot(C[,1:k])
+    return(C[,1:k])
+}
+@
+
+
+\subsection{Données de mutations}
+
+
+<<echo=FALSE>>=
+load("exo2.RData")
+@
+
+On obtient des résulats similaires (en isométries près) en utilisant la fonction AFTD de l'exercice précédent, et la fonction cmdscale. 
+
+<<fig.height=5, echo=F>>=
+par(mfrow=c(1,2))
+AFTD(mutations)
+plot(cmdscale(mutations))
+@
+
+
+\section*{Exercice 2} 
+
+
+
+\subsection*{Iris}
+
+
+\subsubsection*{Question 1 - Différents nombres de partiton}
+
+\includegraphics[width=\textwidth]{ex2_iris_1.png}
+
+
+Premièrement, nous remarquons que les partitions n'ont pas toutes le même nombre d'éléments. 
+Ensuite, elle varie suivant le nombre de partitions. En effet, nous pourrions penser qu'entre eux 3 et 4 partitions, l'ajout d'une partition subdiviserait une partition déjà existante. Comme le montre les graphes ci dessous cela n'est pas le cas. En effet les 3 partitions de droit pour K=4 ne sont pas pas contenus dans entièrement 2 partitions de K=3. Toutes les partitions sont redéfinis à chaque fois que nous augmontons le nombre. 
+Nous savons qu'il existe 3 espèces distinctes d'Iris représentées la représentation avec K=3 représente assez fidélement les 3 espèces. 
+\subsubsection*{Question 2 - Stabilité des partitions}
+
+De plus, même pour un même K, dans notre cas k=3, les partitions peuvent changer. Ici, nous avons deux cas différents avec des inerties de classes de 78.9 ou 143. Cela est du au choix aléatoire des centres au début de l'algorithme, nous tombons parfois sur un minima local. Cela une partition correspond à la classification selon les espéces il s'agit de celle avec le miminum d'inertie intra-classes
+
+\includegraphics[width=0.7\textwidth]{ex2_iris_2.png}
+
+ 
+\subsubsection*{Question 3 - Nombre de partitions optimales}
+
+\begin{verbatim}
+$test <- matrix(0, 9, 100)$
+$for(j in 1:9){
+  for(i in 1:100){
+    test[j, i] = kmeans(iris, j+1)$tot.withinss
+  }
+}$
+
+apply(test, 2, min)
+\end{verbatim}
+
+La solution qui apparait en 3 classes n'est pas flagrante avec le tableau des minimums des inerties. La méthode du coude ne fonctionne pas très bien, elle ne fait pas apparaitre de coude. Le minimum d'inertie de  fait que diminuer en fonction du nombre de classes. 
+Une solution serait de pénaliser un grand nombre de classes par le nombre d'individus présents dans la classe.
+
+
+\subsection*{Crabs}
+
+
+
+
+\includegraphics[width=0.4\textwidth]{ex2_iris_3.png}
+
+
+La solution optimale semble être en 3 classes. Pourtant celle-ci n'est pas flagrante avec le tableau des minimums des inerties. La méthode du coude ne fonctionne pas très bien, elle ne fait pas apparaitre de coude. Le minimum d'inertie de  fait que diminuer en fonction du nombre de classes. 
+Une solution serait de pénaliser un grand nombre de classes par le nombre d'individus présents dans la classe.
+
+\subsubsection*{Question 4 - Partitions réelles}
+
+\includegraphics[width=0.7\textwidth]{ex2_iris_4.png}
+
+La première espèce (setosa) est bien différenciée suivant la méthode des centre mobiles alors que les espèces versicolor et verginia se chevauchent il est alors plus difficile pour l'algorithme de les différencer efficacement. 
+
+\subsection*{Crabs}
+
+\includegraphics[width=0.3\textwidth]{ex2_crab_1.png}
+
+Selon le graphe ci dessous de la méthode du coude, le nombre optimal de partition est 3. Le coude est bien visible pour les crabes. Cela est en contradiction avec la classification selon l'espèce et le sexe qui donne 4 classes diffèrentes.  
+
+
+\includegraphics[width=0.5\textwidth]{ex2_crab_3.png}
+
+J'ai donc effectué les 2 classifications avec 3 et 4 partitions. 
+
+\includegraphics[width=0.5\textwidth]{ex2_crab_4.png}
+
+Nous retrouvons à peu près les mêmes classes avec la partitions des centre mobiles ou suivant la classification suivant l'espèce et le sexe. Cela montre bien que les autres variables permettent de déterminer l'espèce et le sexe d'un crabe. 
+
+
+
+\subsection*{Mutations}
+
+\includegraphics[width=0.5\textwidth]{ex2_mutation_2.png}
+
+
+La partition avec K=3 n'est pas stable du tout. Après avoir tourné plusieurs fois l'algorithme, nous remarquons au moins 5 partitions différentes avec k=3. Nous avons représenté 2 représentations différentes de partitions dans le premier plan factoriel. Les données sont trop proches pour définir 3 classes vraiment distinctes et nous ne prenons pas assez de parametre en compte. 
+
+On tableau de contingence permet de comparer les différences entre les 2 partitions
+
+<<echo=FALSE>>=
+load("ex2.data.RData")
+table(f3$cluster, f1$cluster)
+@
+\section*{Conclusion}
+
+La méthode des centres mobiles est une méthode de classification qui se révèle assez efficace sans prendre trop de temps et demander pleins d'itérations. Par contre, le choix des centres aléatoires au départ nous amène parfois à tomber sur des minimums locaux et à ne pas rendre le résultat escompté. De plus, il faut réussir à estimer soi-même le nombre de classes optimales. Cela peut être fait avec la méthode du coude mais qui s'avère ne pas donner de résultat significatif dans tous les cas comme le montre le cas des Iris. 
+
+
+\end{document}

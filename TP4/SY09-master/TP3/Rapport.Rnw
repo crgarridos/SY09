@@ -1,0 +1,388 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[cyr]{aeguill}
+\usepackage[francais]{babel}
+\usepackage{amsmath}
+%\usepackage{bbold}
+
+\begin{document}
+
+\title{TP3: Discrimination, théorie bayésienne de la décision}
+\author{Jean Baptiste Vivier - Marion Depuydt}
+\maketitle
+\section*{Classifieur euclidien, K plus proches voisins}
+
+
+
+\subsection*{Programmation}
+
+Voir code en annexe
+
+<<echo=FALSE>>=
+load("exo1.Rdata")
+@
+
+\subsection*{Evaluation des performances}
+
+\subsubsection*{Centre de gravité $ \mu_k $ et matrice de covariance $ \sum_k $ }
+
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\multicolumn{2}{|c|}{Synth1} & $\mu_k$ & $\sum_k$ & $\pi_k$  \\
+\hline
+40 & $k=1$ & (-1.904681,0.698841) & $\begin{pmatrix}
+   0.7701334  & 0.2566214 \\
+   0.2566214 & 1.0798685 
+\end{pmatrix}$
+  & 0.55 \\
+\cline{2-3}
+ & $k=2$  & (0.8808594, 0.8587835) & $\begin{pmatrix}
+  1.41546550  & -0.01011499 \\
+  -0.01011499 & 1.22191696 
+\end{pmatrix}$ & 0.45 \\
+\hline
+100 & $k=1$ & (-1.808233,1.057774) & $\begin{pmatrix}
+   1.50880197  & 0.07097749 \\
+   0.07097749 & 0.95833356 
+\end{pmatrix}$
+  & 0.53 \\
+\cline{2-3}
+ & $k=2$  & (0.9831412 1.1610775) & $\begin{pmatrix}
+  0.84677155  & 0.04545945 \\
+  0.04545945 & 0.71631862 
+\end{pmatrix}$ & 0.48 \\
+\hline
+500 & $k=1$ & (-1.9101695, 0.9359349) & $\begin{pmatrix}
+   1.16050554  & 0.03149239 \\
+   0.03149239 & 0.87727376 
+\end{pmatrix}$
+  & 0.48 \\
+\cline{2-3}
+ & $k=2$  & (0.9979001, 0.9843533) & $\begin{pmatrix}
+  0.91978725  & -0.03484383 \\
+  -0.03484383 & 0.95416768 
+\end{pmatrix}$ & 0.52 \\
+\hline
+1000 & $k=1$ & (-1.998992, 1.008186) & $\begin{pmatrix}
+   1.03969441  & -0.07115634 \\
+   -0.07115634 & 0.97107695 
+\end{pmatrix}$
+  & 0.488 \\
+\cline{2-3}
+ & $k=2$  & (1.0908900 0.9837324) & $\begin{pmatrix}
+  1.00246869  & -0.02488749 \\
+  -0.02488749 & 1.02228782 
+\end{pmatrix}$ & 0.512 \\
+\hline
+\end{tabular}\\ \\
+
+Nous remarquons que plus l'échantillon est grand plus $\mu_1 \to \begin{pmatrix} -2 \\ 1 \end{pmatrix}$ et $\mu_2 \to \begin{pmatrix} 1 \\ 1 \end{pmatrix}$
+De même, $\sum_1 = \sum_2 \to \begin{pmatrix}
+  1  & 0 \\
+  0 & 1  
+\end{pmatrix}$ et $\pi_1 = \pi_2 \to$ 0.5.
+
+
+\subsection*{Paramètres $\mu_k$ et $\sum_k$ de Synth2}
+
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\multicolumn{2}{|c|}{Synth2} & $\mu_k$ & $\sum_k$ & $\pi_k$  \\
+\hline
+1000 & $k=1$ & (-4.055942,1.011496) & $\begin{pmatrix}
+   1.01455973  & 0.01845083 \\
+   0.01845083 & 0.93975424 
+\end{pmatrix}$
+  & 0.488 \\
+\cline{2-3}
+ & $k=2$  & (4.028957, 1.067821) & $\begin{pmatrix}
+  4.9533975  & 0.1079094 \\
+  0.1079094 & 5.0221245 
+\end{pmatrix}$ & 0.512 \\
+\hline
+\end{tabular}
+
+\subsection*{Intervalle de confiance}
+
+
+Soit $E=\frac{1}{m}\sum 1_{z_i\ne z_i}$, $T_i=1_{z_i\ne z_i}$ suit une loi de Bernouilli de paramètre $\varepsilon$ car $P(T_i=1)=E(E)=E(\frac{1}{m}\overset{m}{\underset{i}{\sum}}T_i)=\frac{1}{m}E(\overset{m}{\underset{i}{\sum}}{T_i})=m\overset{m}{\underset{i}{\sum}} E(T_1)=\frac{m \varepsilon}{m}=\varepsilon$.
+
+
+
+$mE$ suit donc une loi binomiale. Elle peut être approchée par une loi normale car on suppose que $m$ est grand. $mE\sim \mathcal{N}(m\varepsilon,m\varepsilon(1-\varepsilon))$.
+
+Donc $E\sim \mathcal{N}(\varepsilon,m^{-1}\varepsilon(1-\varepsilon))$
+
+On ne connait pas la variance. On sait que l'on a pour une loi gaussienne E : $\frac{\bar{E}-\mu}{S^*/\sqrt{N}} \sim \tau_{N-1}$ On peut en déduire un intervalle de confiance pour l'espérance de E, comme les taux d'erreur $E_j$ sont indépendants. 
+
+On va chercher $\mu$ tel que : $P(\frac{\bar{E}-\mu}{S^*/\sqrt{N}}) < 1-\alpha$
+
+On obtient après calculs :
+$IC = [\bar{E} - t_{N-1;1-\alpha/2}\frac{S^*}{\sqrt{N}}, \bar{E} + t_{N-1;1-\alpha/2}\frac{S^*}{\sqrt{N}}]$
+
+
+
+\subsection*{Calcul d'erreurs ceuc}
+
+Veuillez vous référer à la fonction \texttt{"calculate\_err\_apperrtst"} dans les annexes pour voir le script.
+
+On obtient comme estimation du taux d'erreur d'apprentissage et du taux d'erreur de test :
+
+<<echo=FALSE>>=
+colMeans(err_ceuc)
+@
+
+L'intervalle de confiance est, en prenant $\alpha = 0,95$ : 
+
+$IR_tst = [1,142-2,093*\frac{0,0107}{\sqrt{20}}, 1,142+2,093*\frac{0,0107}{\sqrt{20}}] = [1,137,1,147]$
+
+$IR_app = [0.091-2,093*\frac{0,0022}{\sqrt{20}}, 0.091+2,093*\frac{0,0022}{\sqrt{20}}] = [0.090,0.092]$
+
+\subsection*{Calcul d'erreurs kppv}
+
+Si l'on sépare l'ensemble de données uniquement en en ensemble d'apprentissage et en un ensemble de test, les résultats sont biaisés. 
+
+
+
+\section*{Règle de Bayes}
+
+\subsection*{Distributions marginales}
+X\raisebox{-0.7ex}{$\widetilde{w_1}$}$\mathcal{N}(\mu_1, \sum_1)$ et X\raisebox{-0.7ex}{$\widetilde{w_2}$}$\mathcal{N}(\mu_2, \sum_2)$
+ce qui donne respectivement \newline
+$f_1(x)= \frac{1}{2\pi}e^{-1/2*((x_1+2)^2+(x_2-1)^2)}$ et
+$f_2(x)= \frac{1}{2\pi}e^{-1/2*((x_1-1)^2+(x_2-1)^2)}$ \newline
+$\sum_1$ et $\sum_2$ sont diagonales ce qui implique que $X_1$, ..., $X_k$ sont indépendantes Nous pouvons par conséquent écrire que $f_1=f_{11}*f_{12}$ et $f_2=f_{21}*f_{22}$. \newline 
+De plus, nous savons que les $f_{11}$ et $f_{12}$ sont des lois normales car ce sont des sous vecteurs d'un vecteur gaussien. \newline
+Nous pouvons donc poser
+$X^1$\raisebox{-0.7ex}{$\widetilde{w_1}$}$\mathcal{N}(a_1, b_1)$, $X^2$\raisebox{-0.7ex}{$\widetilde{w_2}$}$\mathcal{N}(a_2, b_2)$ et $X^2$\raisebox{-0.7ex}{$\widetilde{w_1}$}$\mathcal{N}(c_1, d_1)$, $X^2$\raisebox{-0.7ex}{$\widetilde{w_2}$}$\mathcal{N}(c_2, d_2)$. \newline
+En résolvant le système nous obtenons: $X^1$\raisebox{-0.7ex}{$\widetilde{w_1}$}$\mathcal{N}(-2, 1)$ , $X^1$\raisebox{-0.7ex}{$\widetilde{w_2}$}$\mathcal{N}(1, 1)$ ainsi que $X^2$\raisebox{-0.7ex}{$\widetilde{w_1}$}$\mathcal{N}(1, 1)$ et $X^2$\raisebox{-0.7ex}{$\widetilde{w_2}$}$\mathcal{N}(1, 1)$
+
+Pour le jeu de données Synth2, nous obtenons $f_1(x)= \frac{1}{2\pi}e^{-1/2*((x_1+4)^2+(x_2-1)^2)}$
+et $f_2(x)= \frac{1}{10\pi}e^{-1/10*((x_1-4)^2+(x_2-1)^2)}$
+De même tous sous vecteurs d'un vecteur gaussien suit une loi normale et sont indépendants car les matrices $\sum_1$ et $\sum_2$ sont diagonales. 
+En procédant de la même manière, nous obtenons $X^1$\raisebox{-0.7ex}{$\widetilde{w_1}$}$\mathcal{N}(-4, 1)$ , $X^1$\raisebox{-0.7ex}{$\widetilde{w_2}$}$\mathcal{N}(1, 1)$ ainsi que $X^2$\raisebox{-0.7ex}{$\widetilde{w_1}$}$\mathcal{N}(4, 5)$ et $X^2$\raisebox{-0.7ex}{$\widetilde{w_2}$}$\mathcal{N}(1, 5)$
+
+\subsection*{Courbes d'iso-densité}
+
+L'équation de la courbe d'iso-densité de la classe 1 est $(x - \mu_1)^t\sum_1^{-1}(x-\mu_1)=c$ où c est une constante. Après avoir effectué les calculs nous obtenons, $(x_1-2)^2+(x_2-1)^2=c_1$ or l'équation d'un cercle de centre (a,b) et de rayon s'écrit $(x_1-a)^2+(x_2-b)^2=r^2$. 
+Nous en déduisons donc que la courbe d'iso-densité de la classe 1 est un cercle de centre (-2,1) et de rayon $\sqrt{c_1}$.
+
+Nous procédons de même pour déterminer que la courbe d'iso-densité de la classe 2 est un cercle de centre (1, 1) et de rayon $\sqrt{c_2}$.Nous remarquons que le centre des cercles correspond à $\mu$. 
+
+Nous pouvons avoir une idée plus précise de la valeur $c_1$ en résolvant l'équation $f_1(x)=K_1$ où $K_1$ est une constante. Nous trouvons que $c_1=-2ln(2\pi K_1)$ et de la même manière $c_2=-2ln(2\pi K_2)$
+
+Nous procédons de même pour le set données Synth2, nous obtenons ainsi que la courbe d'iso densité de la classe 1 est un cercle de centre (-4,1) et de rayon $\sqrt{-2ln(2\pi K_3)}$ et que celle de la classe est aussi un cercle de centre (4, 1) et de rayon $\sqrt{-10ln(10\pi K_4)}$.
+
+\subsection*{Règle de Bayes}
+La règle de Bayes s'écrit de la manière suivante:
+$\delta^{*}(x) =
+\begin{cases} 
+  a_{1} & si \frac{f_{1}(x)}{f_{2}(x)} > \frac{\pi_{2}}{\pi{1}} \\
+  a_{2} & sinon.
+\end{cases}$\\ \\
+
+Après simplification nous obtenons, $\delta^{*}(x) = \begin{cases} 
+  a_{1} & si  \> x_1 < \frac{ln(\pi_1)-ln(\pi_2)}{3} - \frac{1}{2} \\
+  a_{2} & sinon.
+\end{cases}$\\ \\
+
+Or d'après l'énonce $\pi_1 = 0.5$ donc $\pi_2= 0.5$ aussi pour que la somme des proportions des classes soient égales à 1 ce qui simplifie l'équation:\\ 
+$\delta^{*}(x) = \begin{cases} 
+  a_{1} & si  \> x_1 < - \frac{1}{2} \\
+  a_{2} & sinon.
+\end{cases}$\\ \\
+
+Pour Synth2, après symplification nous obtenons: \\ 
+$\delta^{*}(x) = \begin{cases} 
+  a_{1} & si  \> (x_1+4)^2+(x_2-1)^2 < -\frac{5}{4}ln(\frac{\pi_2}{5\pi_1}) \\
+  a_{2} & sinon.
+\end{cases}$\\ \\
+
+\subsection*{Frontières de décision}
+Vous trouverez ci dessous les 4 graphes dans le plan avec la frontière de décision trouvée à la question précédente.
+
+
+<<echo=F>>=
+par(mfrow=c(2,2))
+plot(synth1[,1] ~ synth1[,2], col=synth1[,3], xlab="X1",ylab="X2")
+abline(a = -1/2, b=0, col = "blue")
+title("Synth1 40")
+plot(synth100[,1] ~ synth100[,2], col=synth100[,3], xlab="X1",ylab="X2")
+abline(a = -1/2, b=0, col = "blue")
+title("Synth1 100")
+plot(synth500[,1] ~ synth500[,2], col=synth500[,3], xlab="X1",ylab="X2")
+abline(a = -1/2, b=0, col = "blue")
+title("Synth1 500")
+plot(synth1000[,1] ~ synth1000[,2], col=synth1000[,3], xlab="X1",ylab="X2")
+abline(a = -1/2, b=0, col = "blue")
+title("Synth1 1000")
+@
+\subsection*{Erreur de Bayes}
+
+$\alpha$ = $\mathcal{P}$($\delta^{*}$(\textit{x}) = $a_{2}\mid\omega_{1}$) et
+$\beta$ = $\mathcal{P}$($\delta^{*}$(\textit{x}) = $a_{1}\mid\omega_{2}$). Pour les calculer, vous trouverez les deux fonctions que nous avons utilisés en annexes (Estimateur $\alpha$ et $\beta$). \\
+
+\begin{tabular}{|c|c|c|}
+\hline
+Synth1 & $\alpha$ & $\beta$ \\
+\hline
+40 & 0.09090909 & 0.09090909 \\
+\hline
+100 & 0.1320755 & 0.05660377 \\
+\hline
+500 & 0.08333333 & 0.07083333 \\
+\hline
+1000 & 0.07786885 & 0.05737705 \\
+\hline
+\end{tabular}\\ \\
+
+
+\begin{verbatim}
+
+
+
+\end{verbatim}
+\section*{Annexe}
+
+\section*{Règle de Bayes}
+
+\subsection{quelles sont les distributions marginales des variables X1 et X2 dans chaque classe ?}
+
+Les matrices de covariance conditionnelles $\Sigma_1$ et $\Sigma_2$ sont diagonales, donc les variables $X_1$ et $X_2$ sont indépendantes. Donc $f(x|w_k) = f(x_1|w_k)f(x_2|w_k), k \in {1,2}$
+
+De plus, les individus des deux classes, $\omega_1$ et $\omega_2$ suivent une loi normale bivariée. Or tout sous-vecteur d'un vecteur aléatoire gaussien suit aussi une loi gaussienne. Les composantes de $X$, $X_1$ et $X_2$ suivent donc aussi une loi gaussienne.
+
+En développant de part et d'autre l'égalité $f(x|w_k) = f(x_1|w_k)f(x_2|w_k), k \in {1,2}$, on obtient :
+
+$X_1 \sim \mathcal{N}(\mu_{11}, 1)$ et
+$X_2 \sim \mathcal{N}(\mu_{12}, 1)$
+
+\subsection{Montrer que dans chaque classe, les courbes d’iso-densité sont des cercles dont on précisera lescentres et les rayons.}
+
+$\Sigma_1$ et $\Sigma_2$ sont des matrice identité. Les courbes isodensité ont donc pour équation $(x-\mu_1)^t(x-\mu_1) = c_1$ et $(x-\mu_2)^t(x-\mu_2) = c_2$, où $c_1, c_2$ sont des constantes. 
+
+
+Il s'agit d'équations de cercles dont les centres sont $\mu_1$ et $\mu_2$ respectivement, et de rayons $\sqrt{c_1}$ et $\sqrt{c_2}$ respectivement.
+
+
+
+\section{Annexe}
+
+\subsection*{Classifieur euclidien: fonction d'apprentissage}
+<<eval=FALSE>>=
+ceuc.app <- function(Xapp, zapp){
+  apply(Xapp, 2, by, zapp, mean)
+}
+@
+\subsection*{Classifieur euclidien: fonction d'évaluation}
+<<eval=FALSE>>=
+ceuc.val <- function(mu, Xtst){
+  sol <- matrix(nrow = nrow(Xtst))
+  dist <- matrix(ncol = nrow(mu), nrow = nrow(Xtst))
+  for(i in 1:nrow(Xtst)){
+    for(j in 1:nrow(mu)){
+      dist[i,j] <- sqrt(sum((Xtst[i,]-t(mu[j,]))^2))
+    }
+  }
+  # choisir la colonne de la classe
+  min <- apply(dist, 1, min)
+  ntst <- vector('numeric', nrow(dist))
+  for(i in 1:nrow(dist)){
+    for(j in 1:ncol(dist)){
+      if(min[i]==dist[i,j]){
+        ntst[i] = j
+      }
+    }
+  }
+  ntst
+}
+@
+\subsection*{KPPV: fonctions d'apprentissage du nombre optimal de voisins K}
+<<eval=FALSE>>=
+kppv.app <- function(Xapp, zapp, Xval, zval, nppv)
+{
+  for(i in nppv){
+    min <- i
+    erreur_opt <- 1
+    tmp <- kppv.val(Xapp, zapp, i, Xval)
+    erreur <- sum((tmp == zval)==TRUE)/length(zval)
+    if(erreur_opt > erreur){
+      erreur_opt <- erreur
+      min <- i
+    }
+  }
+  min
+}
+@
+\subsection*{KPPV: fonctions d'évaluation suivant un K donné}
+<<eval=FALSE>>=
+kppv.val <- function(Xapp, zapp, K, Xtst)
+{
+  dist <- matrix(ncol = nrow(Xtst), nrow = nrow(Xapp))
+  for(i in 1:nrow(Xtst)){
+    for(j in 1:nrow(Xapp)){
+      dist[j,i] <- sqrt(sum((Xtst[i,]-t(Xapp[j,]))^2))
+    }
+  }
+  tmp <- apply(dist, 2, order)
+  tmp2 <- tmp
+  for(i in 1:ncol(tmp)){
+    tmp2[,i] <- zapp[tmp[,i]]
+  }
+  tmp2 <- tmp2[1:K,]
+  round(apply(tmp2, 2, mean))
+}
+@
+\subsection*{Estimateur $\alpha$ et $\beta$}
+<<eval=FALSE>>=
+estimateurAlpha <- function(data){
+  sum(apply(data, 1,
+  function(row) {
+    if(row[3] == 1 && row[1] > -0.5) 
+      { return(1) } 
+    return(0) }
+  )) / sum(data[,3] == 1)
+}
+
+estimateurBeta <- function(data){
+  sum(apply(data, 1,
+            function(row) {
+              if(row[3] == 2 && row[1] < -0.5) 
+              { return(1) } 
+              return(0) }
+  )) / sum(data[,3] == 1)
+}
+@
+
+
+<<eval=FALSE>>=
+calculate_errapp_errtest = function(X,z){
+  errors = matrix(0,20,2)
+	colnames(errors) = c("err_tst","err_app")
+	
+
+	for(i in 1:20){
+		random = separ1(X,z)		
+		Xapp = random$Xapp
+		Xtst = random$Xtst
+		zapp = random$zapp
+		ztst = random$ztst
+		
+		mu = ceuc.app(Xapp,zapp)
+		
+		ztst_ceuc = ceuc.val(mu,Xtst)
+		zapp_ceuc = ceuc.val(mu,Xapp)
+		
+		err_tst = sum(ztst != ztst_ceuc) / length(ztst)
+		err_app = sum(zapp != zapp_ceuc) / length(zapp)
+		errors[i,1] = err_tst
+		errors[i,2] = err_app
+	}
+	
+	return(errors)
+}
+@
+
+
+\end{document}

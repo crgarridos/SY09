@@ -1,0 +1,11 @@
+.Rproj.user
+.Rhistory
+.RData
+**/Rapport.log
+**/Rapport.tex
+**/Rapport.synctex.gz
+**/Rapport.pdf
+TP2/figure/**
+TP3/figure/**
+TP4/figure/**
+**/Rapport-concordance.tex
